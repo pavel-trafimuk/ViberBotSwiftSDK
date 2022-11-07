@@ -35,7 +35,7 @@ public final class ViberBot {
 //        guard let usedSender = sender ?? defaultSender else {
 //            throw ViberBotError.senderNotDefined
 //        }
-//        
+//
 //        let internalModel = TextMessageInternalRequestModel(text: model.text,
 //                                                            receiver: receiver,
 //                                                            sender: usedSender,
@@ -44,7 +44,7 @@ public final class ViberBot {
 //        guard let url = URL(string: Endpoint.sendMessage.urlPath) else {
 //            throw ViberBotError.endpointUrlIsNotValid
 //        }
-//        
+//
 //        var request = URLRequest(url: url)
 //        try request.applyJSONAsBody(internalModel, verbose: 0)
 //    }
