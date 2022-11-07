@@ -8,19 +8,27 @@
 import Foundation
 
 public struct SetWebhookRequestModel: Codable {
-    // your URL, which supports HTTPS&SSL and returns OK-200 on empty post request
-    let url: String
+    public init(url: String, authToken: String, eventTypes: [CallbackEventType]? = nil, sendName: Bool, sendPhoto: Bool) {
+        self.url = url
+        self.authToken = authToken
+        self.eventTypes = eventTypes
+        self.sendName = sendName
+        self.sendPhoto = sendPhoto
+    }
     
-    let authToken: String
+    // your URL, which supports HTTPS&SSL and returns OK-200 on empty post request
+    public let url: String
+    
+    public let authToken: String
     
     // nil for alls
-    let eventTypes: [CallbackEventType]?
+    public let eventTypes: [CallbackEventType]?
     
     // Indicates whether or not the bot should receive the user name. Default false
-    let sendName: Bool
+    public let sendName: Bool
     
     // Indicates whether or not the bot should receive the user photo. Default false
-    let sendPhoto: Bool
+    public let sendPhoto: Bool
     
     public enum CodingKeys: String, CodingKey {
         case url

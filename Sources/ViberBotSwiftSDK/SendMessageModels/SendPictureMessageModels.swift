@@ -9,6 +9,15 @@ import Foundation
 
 // for high-level sender
 public struct PictureMessageRequestModel {
+    public init(text: String, media: URL, thumbnail: URL? = nil, receiver: String, sender: SenderInfo, trackingData: String? = nil) {
+        self.text = text
+        self.media = media
+        self.thumbnail = thumbnail
+        self.receiver = receiver
+        self.sender = sender
+        self.trackingData = trackingData
+    }
+    
     public let text: String
     public let media: URL
     public let thumbnail: URL?

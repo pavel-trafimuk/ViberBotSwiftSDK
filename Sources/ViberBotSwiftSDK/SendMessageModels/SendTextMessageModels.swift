@@ -9,12 +9,25 @@ import Foundation
 
 // for high-level sender
 public struct TextMessageRequestModel {
+    public init(text: String, trackingData: String? = nil) {
+        self.text = text
+        self.trackingData = trackingData
+    }
+    
     public let text: String
     public let trackingData: String?
 }
 
 // for request body
 public struct TextMessageInternalRequestModel: Codable, SendMessageInternalRequestCommonValues {
+    public init(text: String, receiver: String, sender: SenderInfo, trackingData: String? = nil, authToken: String) {
+        self.text = text
+        self.receiver = receiver
+        self.sender = sender
+        self.trackingData = trackingData
+        self.authToken = authToken
+    }
+    
     public let text: String
 
     public let receiver: String // emid?
