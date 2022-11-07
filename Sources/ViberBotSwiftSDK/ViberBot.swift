@@ -27,25 +27,25 @@ public final class ViberBot {
     }
 }
 
-// send messages
-extension ViberBot {
-    public func sendTextMessage(to receiver: String,
-                                as sender: SenderInfo? = nil,
-                                model: TextMessageRequestModel) async throws -> SendMessageResponseModel {
-        guard let usedSender = sender ?? defaultSender else {
-            throw ViberBotError.senderNotDefined
-        }
-        
-        let internalModel = TextMessageInternalRequestModel(text: model.text,
-                                                            receiver: receiver,
-                                                            sender: usedSender,
-                                                            trackingData: model.trackingData,
-                                                            authToken: apiKey)
-        guard let url = URL(string: Endpoint.sendMessage.urlPath) else {
-            throw ViberBotError.endpointUrlIsNotValid
-        }
-        
-        var request = URLRequest(url: url)
-        try request.applyJSONAsBody(internalModel, verbose: 0)
-    }
-}
+//// send messages
+//extension ViberBot {
+//    public func sendTextMessage(to receiver: String,
+//                                as sender: SenderInfo? = nil,
+//                                model: TextMessageRequestModel) async throws -> SendMessageResponseModel {
+//        guard let usedSender = sender ?? defaultSender else {
+//            throw ViberBotError.senderNotDefined
+//        }
+//        
+//        let internalModel = TextMessageInternalRequestModel(text: model.text,
+//                                                            receiver: receiver,
+//                                                            sender: usedSender,
+//                                                            trackingData: model.trackingData,
+//                                                            authToken: apiKey)
+//        guard let url = URL(string: Endpoint.sendMessage.urlPath) else {
+//            throw ViberBotError.endpointUrlIsNotValid
+//        }
+//        
+//        var request = URLRequest(url: url)
+//        try request.applyJSONAsBody(internalModel, verbose: 0)
+//    }
+//}
