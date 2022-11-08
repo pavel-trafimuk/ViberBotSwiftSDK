@@ -7,7 +7,7 @@
 
 import Foundation
 
-public enum ResponseStatus: Int, Codable {
+public enum ResponseStatus: Int, Codable, Error {
     case ok = 0 // Success
     case invalidUrl = 1 // The webhook URL is not valid
     case invalidAuthToken = 2 // The authentication token is not valid
@@ -33,7 +33,7 @@ public enum ResponseStatus: Int, Codable {
     case paymentUnsupported = 22 // The bot does not support payment messages
     case freeMessagesExceeded = 23 // The non-billable bot has reached the monthly threshold of free out of session messages
     case noBalance = 24 // No balance for a billable bot (when the “free out of session messages” threshold has been reached)
-    case generalError = 1000 // General error
+    case general = 1000 // General error
     
     public init(from decoder: Decoder) throws {
         let resultValue: Int
