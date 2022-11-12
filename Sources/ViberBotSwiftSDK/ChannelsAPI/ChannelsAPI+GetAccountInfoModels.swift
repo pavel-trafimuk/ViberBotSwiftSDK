@@ -24,8 +24,8 @@ extension ChannelsAPI {
         public let status: ResponseStatus
         public let statusMessage: String
         
-        public let channelId: String?
-        public let chatHostName: String?
+        public let id: String?
+        public let name: String?
         public let background: URL?
                 
         public let members: [Member]?
@@ -33,8 +33,8 @@ extension ChannelsAPI {
         public enum CodingKeys: String, CodingKey {
             case status
             case statusMessage = "status_message"
-            case chatHostName = "chat_hostname"
-            case channelId = "Id"
+            case id
+            case name
             case background
             case members
         }

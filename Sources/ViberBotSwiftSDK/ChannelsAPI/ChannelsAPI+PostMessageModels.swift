@@ -8,6 +8,7 @@
 import Foundation
 
 extension ChannelsAPI {
+    
     public struct SendTextRequestModel: Codable {
         public let type: MessageType = .text
         public let text: String
@@ -28,4 +29,19 @@ extension ChannelsAPI {
             case authToken = "auth_token"
         }
     }
+    
+    
+    public struct SendMessageResponseModel: Codable {
+        let status: ResponseStatus
+        let statusMessage: String
+        
+        let messageToken: Int64?
+
+        public enum CodingKeys: String, CodingKey {
+            case status
+            case statusMessage = "status_message"
+            case messageToken = "message_token"
+        }
+    }
+    
 }
