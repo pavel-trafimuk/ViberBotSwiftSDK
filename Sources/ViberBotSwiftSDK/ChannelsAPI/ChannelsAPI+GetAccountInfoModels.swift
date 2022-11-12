@@ -9,7 +9,14 @@ import Foundation
 
 extension ChannelsAPI {
     public struct GetAccountInfoRequestModel: Codable {
-        public init() {
+        public let authToken: String
+
+        public init(authToken: String) {
+            self.authToken = authToken
+        }
+        
+        public enum CodingKeys: String, CodingKey {
+            case authToken = "auth_token"
         }
     }
     

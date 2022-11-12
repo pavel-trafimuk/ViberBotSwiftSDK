@@ -44,6 +44,7 @@ public struct SetWebhookResponseModel: Codable {
     let status: ResponseStatus
     let statusMessage: String
     
+    // TODO: add failable behavior, to decode even if event is unknown
     let eventTypes: [CallbackEventType]?
     
     public enum CodingKeys: String, CodingKey {
