@@ -14,7 +14,7 @@ import Foundation
 //        let base64LoginString = loginData.base64EncodedString()
 //        setValue("Basic \(base64LoginString)", forHTTPHeaderField: "Authorization")
 //    }
-//    
+//
 //    mutating func applyJSONAsBody<T: Codable>(_ model: T, verbose: Int = 0) throws {
 //        let modelData = try JSONEncoder().encode(model)
 //        if verbose > 0 {

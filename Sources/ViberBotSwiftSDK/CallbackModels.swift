@@ -15,6 +15,10 @@ public enum CallbackEvent: Decodable {
     case unsubscribed(model: UnSubscribedCallbackModel)
     case conversationStarted(model: ConversationStartedCallbackModel)
     case message(model: MessageCallbackModel)
+    case clientStatus(model: ClientStatusCallbackModel)
+    
+    // TODO: unknown scenario
+    case action
     
     // specific one
     case webhook(model: SetWebhookCallbackModel)
@@ -44,6 +48,10 @@ public enum CallbackEvent: Decodable {
             self = .message(model: try MessageCallbackModel(from: decoder))
         case .webhook:
             self = .webhook(model: try SetWebhookCallbackModel(from: decoder))
+        case .clientStatus:
+            self = .clientStatus(model: try ClientStatusCallbackModel(from: decoder))
+        case .action:
+            self = .action
         }
     }
 }
@@ -193,6 +201,34 @@ public struct MessageCallbackModel: Codable {
         case messageToken = "message_token"
         case sender
         case message
+    }
+}
+
+public struct ClientStatusCallbackModel: Codable {
+    public let timestamp: Int // TODO: convert epoch time to date
+    public let messageToken: Int64
+    public let user: CallbackUser
+    public let status: Status
+    
+    public struct Status: Codable {
+        public let type: String
+        public let code: Int
+        public let supportedPSPs: [String]
+        public let trackingData: String?
+        
+        public enum CodingKeys: String, CodingKey {
+            case type
+            case code
+            case supportedPSPs = "supported_psps"
+            case trackingData = "tracking_data"
+        }
+    }
+
+    public enum CodingKeys: String, CodingKey {
+        case timestamp
+        case messageToken = "message_token"
+        case user
+        case status
     }
 }
 
