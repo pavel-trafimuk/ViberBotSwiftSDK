@@ -34,10 +34,17 @@ public struct UIGridButton: Codable {
 
 public enum UIGridType: String, Codable {
     case richMedia = "rich_media"
+    case keyboard
 }
 
 public struct UIGridElement: Codable {
-    public let type: String
+    public static let emptyKeyboard = UIGridElement(type: .keyboard,
+                                                    buttonsGroupColumns: 6,
+                                                    buttonsGroupRows: 6,
+                                                    bgColor: nil,
+                                                    buttons: [])
+    
+    public let type: UIGridType
     
     public let buttonsGroupColumns: Int
     public let buttonsGroupRows: Int
