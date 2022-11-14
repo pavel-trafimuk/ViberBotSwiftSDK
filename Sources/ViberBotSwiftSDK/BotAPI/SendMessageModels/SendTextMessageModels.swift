@@ -9,7 +9,9 @@ import Foundation
 
 // for high-level sender
 public struct TextMessageRequestModel {
-    public init(text: String, trackingData: String? = nil) {
+    public init(text: String,
+                keyboard: UIGridElement?,
+                trackingData: String? = nil) {
         self.text = text
         self.trackingData = trackingData
     }
@@ -20,7 +22,12 @@ public struct TextMessageRequestModel {
 
 // for request body
 public struct TextMessageInternalRequestModel: Codable, SendMessageInternalRequestCommonValues {
-    public init(text: String, receiver: String, sender: SenderInfo, trackingData: String? = nil, authToken: String) {
+    public init(text: String,
+                keyboard: UIGridElement?,
+                receiver: String,
+                sender: SenderInfo,
+                trackingData: String? = nil,
+                authToken: String) {
         self.text = text
         self.receiver = receiver
         self.sender = sender

@@ -8,5 +8,5 @@
 import Foundation
 
 public enum ViberRestSwiftSDKConstants {
-    static let minAPIVersion = 3
+    static let minAPIVersion = 7
 }
