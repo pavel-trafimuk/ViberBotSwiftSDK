@@ -33,6 +33,7 @@ public struct TextMessageInternalRequestModel: Codable, SendMessageInternalReque
         self.sender = sender
         self.trackingData = trackingData
         self.authToken = authToken
+        self.keyboard = keyboard
     }
     
     public let text: String
@@ -42,7 +43,8 @@ public struct TextMessageInternalRequestModel: Codable, SendMessageInternalReque
     public let sender: SenderInfo
     public let trackingData: String?
     
-    public let minApiVersion: Int = 3 // TODO: use latest one
+    public let keyboard: UIGridElement?
+    public let minApiVersion: Int = 7 // TODO: use latest one
     public let authToken: String
     
     public enum CodingKeys: String, CodingKey {
@@ -53,5 +55,6 @@ public struct TextMessageInternalRequestModel: Codable, SendMessageInternalReque
         case authToken = "auth_token"
         case trackingData = "tracking_data"
         case minApiVersion = "min_api_version"
+        case keyboard = "keyboard"
     }
 }
