@@ -48,7 +48,7 @@ public struct PictureMessageInternalRequestModel: Codable, SendMessageInternalRe
         case media
         case thumbnail
         case receiver
-        case messageType
+        case messageType = "type"
         case sender
         case authToken = "auth_token"
         case trackingData = "tracking_data"

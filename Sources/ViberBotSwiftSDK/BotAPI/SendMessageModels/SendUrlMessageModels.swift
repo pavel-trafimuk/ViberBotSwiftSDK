@@ -35,7 +35,7 @@ public struct UrlMessageInternalRequestModel: Codable, SendMessageInternalReques
 //        case text
         case media
         case receiver
-        case messageType
+        case messageType = "type"
         case sender
         case authToken = "auth_token"
         case trackingData = "tracking_data"

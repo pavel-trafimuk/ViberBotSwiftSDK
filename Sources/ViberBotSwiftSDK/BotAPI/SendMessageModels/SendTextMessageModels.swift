@@ -50,7 +50,7 @@ public struct TextMessageInternalRequestModel: Codable, SendMessageInternalReque
     public enum CodingKeys: String, CodingKey {
         case text
         case receiver
-        case messageType
+        case messageType = "type"
         case sender
         case authToken = "auth_token"
         case trackingData = "tracking_data"
