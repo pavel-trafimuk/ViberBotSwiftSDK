@@ -29,6 +29,16 @@ public struct PictureMessageRequestModel {
 
 // for request body
 public struct PictureMessageInternalRequestModel: Codable, SendMessageInternalRequestCommonValues {
+    public init(text: String, media: URL, thumbnail: URL? = nil, receiver: String, sender: SenderInfo, trackingData: String? = nil, authToken: String) {
+        self.text = text
+        self.media = media
+        self.thumbnail = thumbnail
+        self.receiver = receiver
+        self.sender = sender
+        self.trackingData = trackingData
+        self.authToken = authToken
+    }
+    
     public let text: String
     public let media: URL
     
