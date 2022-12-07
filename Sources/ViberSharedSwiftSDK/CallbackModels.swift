@@ -235,7 +235,7 @@ public struct ClientStatusCallbackModel: Codable {
 public struct CallbackUser: Codable {
     public let id: String
     public let name: String
-    public let avatar: String
+    public let avatar: String?
     public let country: String
     public let language: String
     public let apiVersion: Int

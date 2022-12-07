@@ -6,20 +6,9 @@
 //
 
 import Foundation
+import ViberSharedSwiftSDK
 
-// for high-level sender
-public struct UrlMessageRequestModel {
-    // TODO: check text
-//    public let text: String?
-    public let media: URL
-
-    public let receiver: String // emid?
-    public let sender: SenderInfo
-    public let trackingData: String?
-}
-
-// for request body
-public struct UrlMessageInternalRequestModel: Codable, SendMessageInternalRequestCommonValues {
+public struct UrlMessageInternalRequestModel: Codable, SendMessageRequestCommonValues {
 //    public let text: String
     public let media: URL
     

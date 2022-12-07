@@ -5,9 +5,10 @@
 //  Created by Pavel Trafimuk on 04/11/2022.
 //
 
-import Foundation
+import ViberSharedSwiftSDK
+import Vapor
 
-public protocol SendMessageInternalRequestCommonValues {
+public protocol SendMessageRequestCommonValues: Content {
     var authToken: String { get }
 
     var receiver: String { get }

@@ -7,8 +7,8 @@
 
 import Foundation
 
-public enum Endpoint {
-    case setWebhook(model: SetWebhookRequestModel)
+public enum Routes {
+    case setWebhook
     case sendMessage
     
     private enum Constants {
@@ -17,7 +17,7 @@ public enum Endpoint {
     
     public var urlPath: String {
         switch self {
-        case .setWebhook(_): return Constants.baseUrl + "/set_webhook"
+        case .setWebhook: return Constants.baseUrl + "/set_webhook"
         case .sendMessage: return Constants.baseUrl + "/send_message"
         }
     }    

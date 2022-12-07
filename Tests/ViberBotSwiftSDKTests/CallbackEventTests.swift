@@ -7,6 +7,7 @@
 
 import XCTest
 import ViberBotSwiftSDK
+import ViberSharedSwiftSDK
 
 final class CallbackEventTests: XCTestCase {
 

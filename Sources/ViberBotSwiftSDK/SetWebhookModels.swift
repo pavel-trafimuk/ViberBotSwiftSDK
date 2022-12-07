@@ -6,9 +6,15 @@
 //
 
 import Foundation
+import ViberSharedSwiftSDK
+import Vapor
 
-public struct SetWebhookRequestModel: Codable {
-    public init(url: String, authToken: String, eventTypes: [CallbackEventType]? = nil, sendName: Bool, sendPhoto: Bool) {
+public struct SetWebhookRequestModel: Codable, Content {
+    public init(url: String,
+                authToken: String,
+                eventTypes: [CallbackEventType]? = nil,
+                sendName: Bool,
+                sendPhoto: Bool) {
         self.url = url
         self.authToken = authToken
         self.eventTypes = eventTypes

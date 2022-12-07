@@ -6,22 +6,10 @@
 //
 
 import Foundation
-
-// for high-level sender
-public struct TextMessageRequestModel {
-    public init(text: String,
-                keyboard: UIGridElement?,
-                trackingData: String? = nil) {
-        self.text = text
-        self.trackingData = trackingData
-    }
-    
-    public let text: String
-    public let trackingData: String?
-}
+import ViberSharedSwiftSDK
 
 // for request body
-public struct TextMessageInternalRequestModel: Codable, SendMessageInternalRequestCommonValues {
+struct TextMessageRequestModel: Codable, SendMessageRequestCommonValues {
     public init(text: String,
                 keyboard: UIGridElement?,
                 receiver: String,

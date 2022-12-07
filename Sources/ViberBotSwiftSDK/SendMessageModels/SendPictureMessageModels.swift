@@ -6,30 +6,17 @@
 //
 
 import Foundation
-
-// for high-level sender
-public struct PictureMessageRequestModel {
-    public init(text: String, media: URL, thumbnail: URL? = nil, receiver: String, sender: SenderInfo, trackingData: String? = nil) {
-        self.text = text
-        self.media = media
-        self.thumbnail = thumbnail
-        self.receiver = receiver
-        self.sender = sender
-        self.trackingData = trackingData
-    }
-    
-    public let text: String
-    public let media: URL
-    public let thumbnail: URL?
-
-    public let receiver: String // emid?
-    public let sender: SenderInfo
-    public let trackingData: String?
-}
+import ViberSharedSwiftSDK
 
 // for request body
-public struct PictureMessageInternalRequestModel: Codable, SendMessageInternalRequestCommonValues {
-    public init(text: String, media: URL, thumbnail: URL? = nil, receiver: String, sender: SenderInfo, trackingData: String? = nil, authToken: String) {
+public struct PictureMessageRequestModel: Codable, SendMessageRequestCommonValues {
+    public init(text: String,
+                media: URL,
+                thumbnail: URL? = nil,
+                receiver: String,
+                sender: SenderInfo,
+                trackingData: String? = nil,
+                authToken: String) {
         self.text = text
         self.media = media
         self.thumbnail = thumbnail
@@ -45,7 +32,7 @@ public struct PictureMessageInternalRequestModel: Codable, SendMessageInternalRe
     // Recommended: 400x400. Max size: 100kb.
     public let thumbnail: URL?
 
-    public let receiver: String // emid?
+    public let receiver: String
     public let messageType: MessageType = .picture
     public let sender: SenderInfo
     public let trackingData: String?
