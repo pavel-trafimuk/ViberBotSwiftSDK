@@ -35,7 +35,7 @@ public final class ViberBot {
                               routeGroup: String,
                               app: Application) async throws {
         print("updateWebhook to \(host)")
-        let requestModel = SetWebhookRequestModel(url: host,
+        let requestModel = SetWebhookRequestModel(url: host + "\\" + routeGroup,
                                                   authToken: apiKey,
                                                   sendName: true,
                                                   sendPhoto: true)
