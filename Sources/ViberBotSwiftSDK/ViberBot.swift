@@ -31,9 +31,9 @@ public final class ViberBot {
         self.defaultSender = defaultSender
     }
     
-    func updateWebhook(to host: String,
-                       routeGroup: String,
-                       app: Application) async throws {
+    public func updateWebhook(to host: String,
+                              routeGroup: String,
+                              app: Application) async throws {
         print("updateWebhook to \(host)")
         let requestModel = SetWebhookRequestModel(url: host,
                                                   authToken: apiKey,
@@ -55,7 +55,7 @@ extension ViberBot {
                       app: Application,
                       onConversationStarted: @escaping (Request, ConversationStartedCallbackModel) -> Void,
                       onMessageReceived: @escaping (Request, MessageCallbackModel) -> Void
-    ) async throws {
+    ) throws {
             let group = app.grouped(.constant(routeGroup))
             group.post { req in
                 print("Received from Bot: \(req.body)")
@@ -115,7 +115,6 @@ extension ViberBot {
                 }
                 return HTTPStatus.ok
             }
-        try await updateWebhook(to: host, routeGroup: routeGroup, app: app)
     }
 }
 
