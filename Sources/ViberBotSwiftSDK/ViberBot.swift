@@ -136,10 +136,10 @@ extension ViberBot {
         }
     }
     
-    func send(text: String,
-              to receiver: String,
-              as sender: SenderInfo? = nil,
-              req: Request) {
+    public func send(text: String,
+                     to receiver: String,
+                     as sender: SenderInfo? = nil,
+                     req: Request) {
         let message = TextMessageRequestModel(text: text,
                                               keyboard: nil,
                                               receiver: receiver,
@@ -148,11 +148,11 @@ extension ViberBot {
         send(content: message, req: req)
     }
     
-    func send(image: String,
-              description: String = "",
-              to receiver: String,
-              as sender: SenderInfo? = nil,
-              req: Request) {
+    public func send(image: String,
+                     description: String = "",
+                     to receiver: String,
+                     as sender: SenderInfo? = nil,
+                     req: Request) {
         guard let url = URL(string: image) else { return }
         let message = PictureMessageRequestModel(text: description,
                                                  media: url,
@@ -162,10 +162,10 @@ extension ViberBot {
         send(content: message, req: req)
     }
     
-    func sendWelcomeMessage(_ text: String,
-                            to receiver: String,
-                            as sender: SenderInfo? = nil,
-                            req: Request) {
+    public func sendWelcomeMessage(_ text: String,
+                                   to receiver: String,
+                                   as sender: SenderInfo? = nil,
+                                   req: Request) {
         let content = TextMessageRequestModel(text: text,
                                               keyboard: nil,
                                               receiver: receiver,
