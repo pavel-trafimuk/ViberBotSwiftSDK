@@ -19,6 +19,8 @@ public final class ViberBot {
     public var defaultSender: SenderInfo
     public var verboseLevel = 1
     
+    let contextStorage = ConversationContextStorage()
+    
     public var allKnownSubscribers = [String: String]() {
         didSet {
             print("allKnownSubscribers: \(allKnownSubscribers)")
@@ -35,7 +37,7 @@ public final class ViberBot {
                               routeGroup: String,
                               app: Application) async throws {
         print("updateWebhook to \(host)")
-        let requestModel = SetWebhookRequestModel(url: host + "//" + routeGroup,
+        let requestModel = SetWebhookRequestModel(url: host + routeGroup,
                                                   authToken: apiKey,
                                                   sendName: true,
                                                   sendPhoto: true)
@@ -54,7 +56,7 @@ extension ViberBot {
                       routeGroup: String,
                       app: Application,
                       onConversationStarted: @escaping (Request, ConversationStartedCallbackModel) -> Void,
-                      onMessageReceived: @escaping (Request, MessageCallbackModel) -> Void
+                      onMessageReceived: @escaping (Request, MessageCallbackModel, ConversationContext) -> Void
     ) throws {
             let group = app.grouped(.constant(routeGroup))
             group.post { req in
@@ -101,9 +103,10 @@ extension ViberBot {
                     if self.allKnownSubscribers[participant] == nil {
                         self.allKnownSubscribers[participant] = model.sender.name
                     }
+                    let context = self.contextStorage.getContext(for: participant)
 
                     Task {
-                        onMessageReceived(req, model)
+                        onMessageReceived(req, model, context)
                     }
                     
                 case .webhook(model: let model):
@@ -138,11 +141,12 @@ extension ViberBot {
     }
     
     public func send(text: String,
+                     keyboard: UIGridView? = nil,
                      to receiver: String,
                      as sender: SenderInfo? = nil,
                      req: Request) {
         let message = TextMessageRequestModel(text: text,
-                                              keyboard: nil,
+                                              keyboard: keyboard,
                                               receiver: receiver,
                                               sender: sender ?? defaultSender,
                                               authToken: apiKey)
@@ -151,12 +155,14 @@ extension ViberBot {
     
     public func send(image: String,
                      description: String = "",
+                     keyboard: UIGridView? = nil,
                      to receiver: String,
                      as sender: SenderInfo? = nil,
                      req: Request) {
         guard let url = URL(string: image) else { return }
         let message = PictureMessageRequestModel(text: description,
                                                  media: url,
+                                                 keyboard: keyboard,
                                                  receiver: receiver,
                                                  sender: sender ?? defaultSender,
                                                  authToken: apiKey)

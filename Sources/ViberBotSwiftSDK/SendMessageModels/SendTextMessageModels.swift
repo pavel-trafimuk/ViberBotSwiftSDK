@@ -11,7 +11,7 @@ import ViberSharedSwiftSDK
 // for request body
 struct TextMessageRequestModel: Codable, SendMessageRequestCommonValues {
     public init(text: String,
-                keyboard: UIGridElement?,
+                keyboard: UIGridView?,
                 receiver: String,
                 sender: SenderInfo,
                 trackingData: String? = nil,
@@ -31,7 +31,7 @@ struct TextMessageRequestModel: Codable, SendMessageRequestCommonValues {
     public let sender: SenderInfo
     public let trackingData: String?
     
-    public let keyboard: UIGridElement?
+    public let keyboard: UIGridView?
     public let minApiVersion: Int = 7 // TODO: use latest one
     public let authToken: String
     

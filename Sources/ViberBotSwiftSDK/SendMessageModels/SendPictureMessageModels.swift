@@ -13,6 +13,7 @@ public struct PictureMessageRequestModel: Codable, SendMessageRequestCommonValue
     public init(text: String,
                 media: URL,
                 thumbnail: URL? = nil,
+                keyboard: UIGridView?,
                 receiver: String,
                 sender: SenderInfo,
                 trackingData: String? = nil,
@@ -24,6 +25,7 @@ public struct PictureMessageRequestModel: Codable, SendMessageRequestCommonValue
         self.sender = sender
         self.trackingData = trackingData
         self.authToken = authToken
+        self.keyboard = keyboard
     }
     
     public let text: String
@@ -31,6 +33,8 @@ public struct PictureMessageRequestModel: Codable, SendMessageRequestCommonValue
     
     // Recommended: 400x400. Max size: 100kb.
     public let thumbnail: URL?
+
+    public let keyboard: UIGridView?
 
     public let receiver: String
     public let messageType: MessageType = .picture
@@ -50,5 +54,6 @@ public struct PictureMessageRequestModel: Codable, SendMessageRequestCommonValue
         case authToken = "auth_token"
         case trackingData = "tracking_data"
         case minApiVersion = "min_api_version"
+        case keyboard = "keyboard"
     }
 }
