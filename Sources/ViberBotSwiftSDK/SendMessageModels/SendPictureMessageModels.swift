@@ -41,7 +41,7 @@ public struct PictureMessageRequestModel: Codable, SendMessageRequestCommonValue
     public let sender: SenderInfo
     public let trackingData: String?
     
-    public let minApiVersion: Int = 3 // TODO: use latest one
+    public let minApiVersion: Int = 7
     public let authToken: String
     
     public enum CodingKeys: String, CodingKey {

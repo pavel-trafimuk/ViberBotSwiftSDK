@@ -14,6 +14,9 @@ public protocol SendMessageRequestCommonValues: Content {
     var receiver: String { get }
     var messageType: MessageType { get }
     var sender: SenderInfo  { get }
+    
+    // context of talking
     var trackingData: String? { get }
+    
     var minApiVersion: Int { get }
 }

@@ -20,6 +20,8 @@ let package = Package(
         // Dependencies declare other packages that this package depends on.
         // .package(url: /* package url */, from: "1.0.0"),
         .package(url: "https://github.com/vapor/vapor.git", from: "4.0.0"),
+        .package(url: "https://github.com/vapor/fluent-sqlite-driver.git", from: "4.0.0"),
+        .package(url: "https://github.com/vapor/fluent.git", from: "4.0.0"),
     ],
     targets: [
         // Targets are the basic building blocks of a package. A target can define a module or a test suite.
@@ -28,6 +30,8 @@ let package = Package(
             name: "ViberBotSwiftSDK",
             dependencies: [
                 .product(name: "Vapor", package: "vapor"),
+                .product(name: "Fluent", package: "fluent"),
+                .product(name: "FluentSQLiteDriver", package: "fluent-sqlite-driver"),
                 .target(name: "ViberSharedSwiftSDK")
             ]),
         .target(

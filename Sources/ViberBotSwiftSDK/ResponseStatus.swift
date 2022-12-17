@@ -8,9 +8,14 @@
 import Foundation
 
 public enum ResponseStatus: Int, Codable, Error {
-    case ok = 0 // Success
-    case invalidUrl = 1 // The webhook URL is not valid
-    case invalidAuthToken = 2 // The authentication token is not valid
+    /// Success
+    case ok = 0
+    
+    /// The webhook URL is not valid
+    case invalidUrl = 1
+    
+    /// The authentication token is not valid
+    case invalidAuthToken = 2
     case badData = 3 // There is an error in the request itself (missing comma, brackets, etc.)
     case missingData = 4 // Some mandatory data is missing
     case receiverNotRegistered = 5 // The receiver is not registered to Viber

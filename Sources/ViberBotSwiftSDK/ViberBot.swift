@@ -8,6 +8,8 @@
 import Foundation
 import Vapor
 import ViberSharedSwiftSDK
+import Fluent
+import FluentSQLiteDriver
 
 public enum ViberBotError: Error {
     case senderNotDefined
@@ -15,24 +17,21 @@ public enum ViberBotError: Error {
 }
 
 public final class ViberBot {
-    let apiKey: String
+    private let apiKey: String
     public var defaultSender: SenderInfo
     public var verboseLevel = 1
     
-    let contextStorage = ConversationContextStorage()
-    
-    public var allKnownSubscribers = [String: String]() {
-        didSet {
-            print("allKnownSubscribers: \(allKnownSubscribers)")
-        }
-    }
+    private let contextStorage = ConversationContextStorage()
     
     public init(apiKey: String,
                 defaultSender: SenderInfo) {
         self.apiKey = apiKey
         self.defaultSender = defaultSender
     }
-    
+}
+
+// Setup Webhook
+extension ViberBot {
     public func updateWebhook(to host: String,
                               routeGroup: String,
                               app: Application) async throws {
@@ -51,6 +50,8 @@ public final class ViberBot {
     }
 }
 
+
+
 extension ViberBot {
     public func setup(host: String,
                       routeGroup: String,
@@ -58,66 +59,103 @@ extension ViberBot {
                       onConversationStarted: @escaping (Request, ConversationStartedCallbackModel) -> Void,
                       onMessageReceived: @escaping (Request, MessageCallbackModel, ConversationContext) -> Void
     ) throws {
-            let group = app.grouped(.constant(routeGroup))
-            group.post { req in
-                print("Received from Bot: \(req.body)")
-                
-                let event = try req.content.decode(CallbackEvent.self)
-                switch event {
-                case .delivered(model: let model):
-                    print("Message delivered \(model.messageToken)")
-                    
-                case .seen(model: let model):
-                    print("Message seen \(model.messageToken)")
-                    
-                case .failed(model: let model):
-                    print("Message failed \(model)")
-                    
-                case .subscribed(model: let model):
-                    print("User subscribed \(model)")
-                    
-                    let participant = model.user.id
-                    if self.allKnownSubscribers[participant] == nil {
-                        self.allKnownSubscribers[participant] = model.user.name
-                    }
-                    
-                case .unsubscribed(model: let model):
-                    print("User unsubscribed \(model)")
-                    
-                case .conversationStarted(model: let model):
-                    print("Conversation started \(model)")
-                    
-                    let participant = model.user.id
-                    if self.allKnownSubscribers[participant] == nil {
-                        self.allKnownSubscribers[participant] = model.user.name
-                    }
-                    
-                    Task {
-                        onConversationStarted(req, model)
-                    }
-                    
-                case .message(model: let model):
-                    print("Received msg: \(model)")
-                    let participant = model.sender.id
-                    
-                    if self.allKnownSubscribers[participant] == nil {
-                        self.allKnownSubscribers[participant] = model.sender.name
-                    }
-                    let context = self.contextStorage.getContext(for: participant)
+        let group = app.grouped(.constant(routeGroup))
+        
+        // it's for testing only
+        app.databases.use(.sqlite(.memory), as: .sqlite)
 
-                    Task {
-                        onMessageReceived(req, model, context)
-                    }
-                    
-                case .webhook(model: let model):
-                    print("Webhook \(model)")
-                case .clientStatus(model: let model):
-                    print("Client Status \(model)")
-                case .action:
-                    print("Action Callback")
+        group.post { req in
+            print("Received from Bot: \(req.body)")
+            
+            let event = try req.content.decode(CallbackEvent.self)
+            switch event {
+            case .delivered(model: let model):
+                print("Message delivered \(model.messageToken) for \(model.userId)")
+                
+            case .seen(model: let model):
+                print("Message seen \(model.messageToken) for \(model.userId)")
+                
+            case .failed(model: let model):
+                print("Message failed \(model)")
+                
+            case .subscribed(model: let model):
+                print("User subscribed \(model)")
+                
+                if let existing = try await Subscriber.find(model.user.id, on: req.db) {
+                    print("Already found")
+                    existing.update(with: model.user)
+                    existing.status = "subscribed"
                 }
-                return HTTPStatus.ok
+                else {
+                    print("A new one")
+                    let justCreated = Subscriber(id: model.user.id, name: model.user.name, avatar: model.user.avatar)
+                    justCreated.update(with: model.user)
+                    justCreated.status = "subscribed"
+                }
+                
+            case .unsubscribed(model: let model):
+                print("User unsubscribed \(model)")
+                
+                if let existing = try await Subscriber.find(model.userId, on: req.db) {
+                    print("Already found")
+                    existing.status = "unsubscribed"
+                }
+                else {
+                    print("Unsubscribed user \(model.userId) is not found")
+                }
+                
+            case .conversationStarted(model: let model):
+                print("Conversation started \(model)")
+                
+                // TODO: track activity
+                if let existing = try await Subscriber.find(model.user.id, on: req.db) {
+                    print("Already found")
+                    existing.update(with: model.user)
+//                    existing.status = "subscribed"
+                }
+                else {
+                    print("A new one")
+                    let justCreated = Subscriber(id: model.user.id, name: model.user.name, avatar: model.user.avatar)
+                    justCreated.update(with: model.user)
+//                    justCreated.status = "subscribed"
+                }
+                
+                Task {
+                    onConversationStarted(req, model)
+                }
+                
+            case .message(model: let model):
+                print("Received msg: \(model)")
+                let participant = model.sender.id
+                
+                // TODO: track activity
+                if let existing = try await Subscriber.find(model.sender.id, on: req.db) {
+                    print("Already found")
+                    existing.update(with: model.sender)
+//                    existing.status = "subscribed"
+                }
+                else {
+                    print("A new one")
+                    let justCreated = Subscriber(id: model.sender.id, name: model.sender.name, avatar: model.sender.avatar)
+                    justCreated.update(with: model.sender)
+//                    justCreated.status = "subscribed"
+                }
+                
+                let context = self.contextStorage.getContext(for: participant)
+                
+                Task {
+                    onMessageReceived(req, model, context)
+                }
+                
+            case .webhook(model: let model):
+                print("Webhook \(model)")
+            case .clientStatus(model: let model):
+                print("Client Status \(model)")
+            case .action:
+                print("Action Callback")
             }
+            return HTTPStatus.ok
+        }
     }
 }
 

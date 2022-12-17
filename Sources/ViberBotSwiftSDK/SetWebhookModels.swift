@@ -22,18 +22,18 @@ public struct SetWebhookRequestModel: Codable, Content {
         self.sendPhoto = sendPhoto
     }
     
-    // your URL, which supports HTTPS&SSL and returns OK-200 on empty post request
+    /// your URL, which supports HTTPS&SSL and returns OK-200 on empty post request
     public let url: String
     
     public let authToken: String
     
-    // nil for alls
+    /// nil for alls
     public let eventTypes: [CallbackEventType]?
     
-    // Indicates whether or not the bot should receive the user name. Default false
+    /// Indicates whether or not the bot should receive the user name. Default false
     public let sendName: Bool
     
-    // Indicates whether or not the bot should receive the user photo. Default false
+    /// Indicates whether or not the bot should receive the user photo. Default false
     public let sendPhoto: Bool
     
     public enum CodingKeys: String, CodingKey {

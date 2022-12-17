@@ -7,12 +7,10 @@
 
 import Foundation
 
+// TODO: improve by storage in DB
 final class ConversationContextStorage {
-    // memberId: context
+    /// memberId: context
     var storages = [String: ConversationContext]()
-    
-    init() {
-    }
     
     func getContext(for memberId: String) -> ConversationContext {
         if let result = storages[memberId] {
