@@ -15,7 +15,7 @@ public final class Subscriber: Model, Content {
     public static let schema = "subscribers"
 
     // Unique identifier for the subscriber.
-    @ID(key: .id)
+    @ID(custom: "user_id")
     public var id: String?
 
     // The Subscriber's name.
