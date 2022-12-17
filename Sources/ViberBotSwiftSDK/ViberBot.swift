@@ -63,6 +63,7 @@ extension ViberBot {
         
         // it's for testing only
         app.databases.use(.sqlite(.memory), as: .sqlite)
+        app.migrations.add(CreateSubscriber())
 
         group.post { req in
             print("Received from Bot: \(req.body)")
