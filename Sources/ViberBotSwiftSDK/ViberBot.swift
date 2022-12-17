@@ -180,6 +180,7 @@ extension ViberBot {
     
     public func send(text: String,
                      keyboard: UIGridView? = nil,
+                     trackingData: String?,
                      to receiver: String,
                      as sender: SenderInfo? = nil,
                      req: Request) {
@@ -187,6 +188,7 @@ extension ViberBot {
                                               keyboard: keyboard,
                                               receiver: receiver,
                                               sender: sender ?? defaultSender,
+                                              trackingData: trackingData,
                                               authToken: apiKey)
         send(content: message, req: req)
     }
@@ -194,6 +196,7 @@ extension ViberBot {
     public func send(image: String,
                      description: String = "",
                      keyboard: UIGridView? = nil,
+                     trackingData: String?,
                      to receiver: String,
                      as sender: SenderInfo? = nil,
                      req: Request) {
@@ -203,6 +206,7 @@ extension ViberBot {
                                                  keyboard: keyboard,
                                                  receiver: receiver,
                                                  sender: sender ?? defaultSender,
+                                                 trackingData: trackingData,
                                                  authToken: apiKey)
         send(content: message, req: req)
     }
@@ -215,6 +219,7 @@ extension ViberBot {
                                               keyboard: nil,
                                               receiver: receiver,
                                               sender: sender ?? defaultSender,
+                                              trackingData: nil,
                                               authToken: apiKey)
         Task {
             do {

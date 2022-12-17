@@ -16,7 +16,7 @@ public struct PictureMessageRequestModel: Codable, SendMessageRequestCommonValue
                 keyboard: UIGridView?,
                 receiver: String,
                 sender: SenderInfo,
-                trackingData: String? = nil,
+                trackingData: String?,
                 authToken: String) {
         self.text = text
         self.media = media

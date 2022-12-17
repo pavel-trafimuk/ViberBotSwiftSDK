@@ -14,7 +14,7 @@ struct TextMessageRequestModel: Codable, SendMessageRequestCommonValues {
                 keyboard: UIGridView?,
                 receiver: String,
                 sender: SenderInfo,
-                trackingData: String? = nil,
+                trackingData: String?,
                 authToken: String) {
         self.text = text
         self.receiver = receiver
