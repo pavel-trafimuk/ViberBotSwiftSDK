@@ -22,6 +22,7 @@ public struct SendMessageResponseModel: Codable {
     public enum BillingStatus: Int, Codable {
         /// Default for all cases other than the ones listed below: chat extension, reply to open conversation, etc.
         case free = 0
+        
         /// 1:1 message/keyboard sent in a session from a non-billable bot
         case inSessionNonBillableBot = 1
         

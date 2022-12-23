@@ -232,6 +232,7 @@ public struct ClientStatusCallbackModel: Codable {
     }
 }
 
+// TODO: fill it with all information
 public struct CallbackUser: Codable {
     public let id: String
     public let name: String

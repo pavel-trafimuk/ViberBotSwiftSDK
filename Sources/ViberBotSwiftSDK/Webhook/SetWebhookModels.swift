@@ -10,6 +10,7 @@ import ViberSharedSwiftSDK
 import Vapor
 
 public struct SetWebhookRequestModel: Codable, Content {
+    
     public init(url: String,
                 authToken: String,
                 eventTypes: [CallbackEventType]? = nil,
@@ -22,7 +23,7 @@ public struct SetWebhookRequestModel: Codable, Content {
         self.sendPhoto = sendPhoto
     }
     
-    /// your URL, which supports HTTPS&SSL and returns OK-200 on empty post request
+    /// your URL, which supports HTTPS & SSL and returns OK-200 on empty post request
     public let url: String
     
     public let authToken: String

@@ -7,10 +7,9 @@
 
 import Foundation
 import Fluent
-import Vapor
 import ViberSharedSwiftSDK
 
-public final class Subscriber: Model, Content {
+public final class Subscriber: Model {
     // Name of the table or collection.
     public static let schema = "subscribers"
 
@@ -25,11 +24,41 @@ public final class Subscriber: Model, Content {
     @OptionalField(key: "avatar")
     public var avatar: String?
 
-    @OptionalField(key: "status")
-    public var status: String?
+    // String representable, Codable enum for animal types.
+    public enum Status: String, Codable {
+        case subscribed
+        case unsubscribed
+    }
 
+    @OptionalEnum(key: "status")
+    public var status: Status?
+    
     @OptionalField(key: "last_context")
     public var lastContext: String?
+
+    @OptionalField(key: "country")
+    public var country: String?
+
+    @OptionalField(key: "language")
+    public var language: String?
+
+    @OptionalField(key: "api_version")
+    public var apiVersion: Int?
+
+    @OptionalField(key: "primary_device_os")
+    public var primaryDeviceOS: String?
+
+    @OptionalField(key: "viber_version")
+    public var viberVersion: String?
+
+    @OptionalField(key: "device_type")
+    public var deviceType: String?
+
+    @OptionalField(key: "mcc")
+    public var mcc: Int?
+
+    @OptionalField(key: "mnc")
+    public var mnc: Int?
 
     // to map user with some external services
     @OptionalField(key: "external_id")
@@ -38,25 +67,6 @@ public final class Subscriber: Model, Content {
     @OptionalField(key: "external_status")
     public var externalStatus: String?
 
-//    // When this Planet was last updated.
-//        @Timestamp(key: "updated_at", on: .update)
-//        var updatedAt: Date?
-    
-//    @Field(key: "external_extra")
-//    public var externalExtra: AnyObject?
-    
-    // TODO:
-    // last getInfo date
-// "country":"UK",
-// "language":"en",
-    // "api_version":1,
-
-// "primary_device_os":"android 7.1",
-// "viber_version":"6.5.0",
-// "mcc":1,
-// "mnc":1,
-// "device_type":"iPhone9,4"
-    
     // Creates a new, empty Subscriber.
     public init() { }
 
@@ -71,9 +81,17 @@ public final class Subscriber: Model, Content {
 }
 
 extension Subscriber {
+    public convenience init(with user: CallbackUser) {
+        self.init()
+        update(with: user)
+    }
+    
     public func update(with user: CallbackUser) {
+        id = user.id
         name = user.name
         avatar = user.avatar
-        // TODO: update other values
+        country = user.country
+        language = user.language
+        apiVersion = user.apiVersion
     }
 }

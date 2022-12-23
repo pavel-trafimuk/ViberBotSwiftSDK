@@ -9,7 +9,7 @@ import Foundation
 import ViberSharedSwiftSDK
 
 // for request body
-struct TextMessageRequestModel: Codable, SendMessageRequestCommonValues {
+public struct TextMessageRequestModel: Codable, SendMessageRequestCommonValues {
     public init(text: String,
                 keyboard: UIGridView?,
                 receiver: String,
