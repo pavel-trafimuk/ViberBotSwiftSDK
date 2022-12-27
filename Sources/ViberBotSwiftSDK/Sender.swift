@@ -79,7 +79,7 @@ public struct Sender {
                     let jsonString = try content.toJSON()
                     request.logger.debug("Sending Welcome Msg Request: \(jsonString)")
                 }
-                let response = try await request.client.post(.init(stringLiteral: receiver), content: content)
+                let response = try await request.client.post(.init(stringLiteral: request.remoteAddress?.hostname ?? ""), content: content)
                 request.logger.debug("Bot Sending Msg Response: \(response)")
             }
             catch {
