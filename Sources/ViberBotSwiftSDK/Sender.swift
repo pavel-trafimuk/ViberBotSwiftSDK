@@ -5,16 +5,19 @@ import ViberSharedSwiftSDK
 // Short life structure for sending msgs
 public struct Sender {
     private let request: Request
-    private let config: BotConfig
     private let senderInfo: SenderInfo
-    // TODO: fix it
-    private let minApi = 7
     
-    public init(request: Request,
-                config: BotConfig) {
+    public init(request: Request) {
         self.request = request
-        self.config = config
-        self.senderInfo = config.defaultSenderInfo
+        self.senderInfo = request.viberBotConfig.defaultSenderInfo
+    }
+    
+    private var minApiVersion: Int {
+        request.viberBotConfig.minApiVersion
+    }
+    
+    private var apiKey: String {
+        request.viberBotConfig.apiKey
     }
     
     private func send(content: any Content) {
@@ -46,8 +49,8 @@ public struct Sender {
                                               receiver: receiver,
                                               sender: senderInfo,
                                               trackingData: trackingData,
-                                              minApiVersion: minApi,
-                                              authToken: config.apiKey)
+                                              minApiVersion: minApiVersion,
+                                              authToken: apiKey)
         send(content: message)
     }
     
@@ -72,8 +75,8 @@ public struct Sender {
                                                  receiver: receiver,
                                                  sender: senderInfo,
                                                  trackingData: trackingData,
-                                                 minApiVersion: minApi,
-                                                 authToken: config.apiKey)
+                                                 minApiVersion: minApiVersion,
+                                                 authToken: apiKey)
         send(content: message)
     }
     
@@ -86,8 +89,8 @@ public struct Sender {
                                              receiver: receiver,
                                              sender: senderInfo,
                                              trackingData: trackingData,
-                                             minApiVersion: minApi,
-                                             authToken: config.apiKey)
+                                             minApiVersion: minApiVersion,
+                                             authToken: apiKey)
         
         send(content: message)
     }
@@ -101,8 +104,8 @@ public struct Sender {
                                               receiver: receiver,
                                               sender: senderInfo,
                                               trackingData: trackingData,
-                                              minApiVersion: minApi,
-                                              authToken: config.apiKey)
+                                              minApiVersion: minApiVersion,
+                                              authToken: apiKey)
         
         send(content: message)
     }
@@ -116,11 +119,11 @@ public struct Sender {
                                               receiver: receiver,
                                               sender: senderInfo,
                                               trackingData: trackingData,
-                                              minApiVersion: minApi,
-                                              authToken: config.apiKey)
+                                              minApiVersion: minApiVersion,
+                                              authToken: apiKey)
         Task {
             do {
-                if config.verboseLevel > 1 {
+                if request.viberBotConfig.verboseLevel > 1 {
                     let jsonString = try content.toJSON()
                     request.logger.debug("Sending Welcome Msg Request: \(jsonString)")
                 }
@@ -139,7 +142,7 @@ public struct Sender {
 
 extension Request {
     public var viberBotSender: Sender {
-        .init(request: self, config: application.viberBotConfig)
+        .init(request: self)
     }
 }
 

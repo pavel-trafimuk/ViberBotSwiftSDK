@@ -15,6 +15,7 @@ public final class BotConfig {
                 sendName: Bool = true,
                 sendPhoto: Bool = true,
                 defaultSenderInfo: SenderInfo,
+                minApiVersion: Int = 7,
                 verboseLevel: Int = 0) {
         self.apiKey = apiKey
         self.hostAddress = hostAddress
@@ -23,6 +24,7 @@ public final class BotConfig {
         self.sendPhoto = sendPhoto
         self.verboseLevel = verboseLevel
         self.defaultSenderInfo = defaultSenderInfo
+        self.minApiVersion = minApiVersion
     }
     
     let apiKey: String
@@ -32,6 +34,7 @@ public final class BotConfig {
     let sendPhoto: Bool
     public var verboseLevel: Int
     public var defaultSenderInfo: SenderInfo
+    public let minApiVersion: Int
 }
 
 extension Application {
@@ -48,6 +51,17 @@ extension Application {
         }
         set {
             storage[BotConfigKey.self] = newValue
+        }
+    }
+}
+
+extension Request {
+    public var viberBotConfig: BotConfig {
+        get {
+            application.viberBotConfig
+        }
+        set {
+            application.viberBotConfig = newValue
         }
     }
 }
