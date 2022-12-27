@@ -57,10 +57,11 @@ public struct UIGridView: Codable {
     }
     
     public static func keyboard(with buttons: [Button],
+                                isDefaultHeight: Bool = false,
                                 backgroundColor: String? = nil,
                                 inputFieldState: InputFieldState = .regular) -> Self {
         .init(type: .keyboard,
-              isDefaultHeight: true,
+              isDefaultHeight: isDefaultHeight,
               backgroundColor: backgroundColor,
               buttons: buttons,
               inputFieldState: inputFieldState)
