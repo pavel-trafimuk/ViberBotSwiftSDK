@@ -1,20 +1,25 @@
-//
-//  File.swift
-//  
-//
-//  Created by Pavel Trafimuk on 11/2/22.
-//
-
 import Foundation
 import ViberSharedSwiftSDK
 
 // for request body
 public struct TextMessageRequestModel: Codable, SendMessageRequestCommonValues {
+    public let text: String
+
+    public let receiver: String
+    public let messageType: MessageType = .text
+    public let sender: SenderInfo
+    public let trackingData: String?
+    
+    public let keyboard: UIGridView?
+    public let minApiVersion: Int
+    public let authToken: String
+    
     public init(text: String,
-                keyboard: UIGridView?,
+                keyboard: UIGridView? = nil,
                 receiver: String,
                 sender: SenderInfo,
-                trackingData: String?,
+                trackingData: String? = nil,
+                minApiVersion: Int,
                 authToken: String) {
         self.text = text
         self.receiver = receiver
@@ -22,18 +27,8 @@ public struct TextMessageRequestModel: Codable, SendMessageRequestCommonValues {
         self.trackingData = trackingData
         self.authToken = authToken
         self.keyboard = keyboard
+        self.minApiVersion = minApiVersion
     }
-    
-    public let text: String
-
-    public let receiver: String // emid?
-    public let messageType: MessageType = .text
-    public let sender: SenderInfo
-    public let trackingData: String?
-    
-    public let keyboard: UIGridView?
-    public let minApiVersion: Int = 7 // TODO: use latest one
-    public let authToken: String
     
     public enum CodingKeys: String, CodingKey {
         case text

@@ -6,11 +6,15 @@ import ViberSharedSwiftSDK
 public struct Sender {
     private let request: Request
     private let config: BotConfig
+    private let senderInfo: SenderInfo
+    // TODO: fix it
+    private let minApi = 7
     
     public init(request: Request,
                 config: BotConfig) {
         self.request = request
         self.config = config
+        self.senderInfo = config.defaultSenderInfo
     }
     
     private func send(content: any Content) {
@@ -40,8 +44,9 @@ public struct Sender {
         let message = TextMessageRequestModel(text: text,
                                               keyboard: keyboard,
                                               receiver: receiver,
-                                              sender: config.defaultSenderInfo,
+                                              sender: senderInfo,
                                               trackingData: trackingData,
+                                              minApiVersion: minApi,
                                               authToken: config.apiKey)
         send(content: message)
     }
@@ -65,13 +70,43 @@ public struct Sender {
                                                  thumbnail: thumbnailUrl,
                                                  keyboard: keyboard,
                                                  receiver: receiver,
-                                                 sender: config.defaultSenderInfo,
+                                                 sender: senderInfo,
                                                  trackingData: trackingData,
+                                                 minApiVersion: minApi,
                                                  authToken: config.apiKey)
         send(content: message)
     }
     
-    // TODO: need to find how to response for this
+    public func send(url: URL,
+                     keyboard: UIGridView? = nil,
+                     trackingData: String?,
+                     to receiver: String) {
+        let message = UrlMessageRequestModel(media: url,
+                                             keyboard: keyboard,
+                                             receiver: receiver,
+                                             sender: senderInfo,
+                                             trackingData: trackingData,
+                                             minApiVersion: minApi,
+                                             authToken: config.apiKey)
+        
+        send(content: message)
+    }
+
+    public func send(rich: UIGridView,
+                     keyboard: UIGridView? = nil,
+                     trackingData: String?,
+                     to receiver: String) {
+        let message = RichMessageRequestModel(richMedia: rich,
+                                              keyboard: keyboard,
+                                              receiver: receiver,
+                                              sender: senderInfo,
+                                              trackingData: trackingData,
+                                              minApiVersion: minApi,
+                                              authToken: config.apiKey)
+        
+        send(content: message)
+    }
+
     public func sendWelcomeMessage(_ text: String,
                                    keyboard: UIGridView? = nil,
                                    trackingData: String?,
@@ -79,8 +114,9 @@ public struct Sender {
         let content = TextMessageRequestModel(text: text,
                                               keyboard: keyboard,
                                               receiver: receiver,
-                                              sender: config.defaultSenderInfo,
+                                              sender: senderInfo,
                                               trackingData: trackingData,
+                                              minApiVersion: minApi,
                                               authToken: config.apiKey)
         Task {
             do {

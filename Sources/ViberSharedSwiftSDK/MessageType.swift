@@ -15,6 +15,6 @@ public enum MessageType: String, Codable {
     case location
     case contact
     case sticker
-    case rich = "carousel"
+    case rich = "rich_media"
     case url
 }
