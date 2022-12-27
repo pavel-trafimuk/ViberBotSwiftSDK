@@ -47,13 +47,22 @@ public struct Sender {
     }
     
     public func send(image: String,
+                     thumbnail: String?,
                      description: String = "",
                      keyboard: UIGridView? = nil,
                      trackingData: String?,
                      to receiver: String) {
         guard let url = URL(string: image) else { return }
+        let thumbnailUrl: URL?
+        if let thumbnail {
+            thumbnailUrl = URL(string: thumbnail)
+        }
+        else {
+            thumbnailUrl = nil
+        }
         let message = PictureMessageRequestModel(text: description,
                                                  media: url,
+                                                 thumbnail: thumbnailUrl,
                                                  keyboard: keyboard,
                                                  receiver: receiver,
                                                  sender: config.defaultSenderInfo,

@@ -157,7 +157,7 @@ extension UIGridView {
                     backgroundColor: String? = nil,
                     actionType: UIGridView.Button.ActionType,
                     actionBody: String? = nil,
-                    isSilent: Bool = false,
+                    isSilent: Bool? = false,
                     image: URL? = nil,
                     text: String? = nil,
                     textSize: UIGridView.Button.TextSize? = nil,
@@ -189,7 +189,7 @@ extension UIGridView {
             case textSize = "TextSize"
             case textVAlign = "TextVAlign"
             case textHAlign = "TextHAlign"
-            case isSilent = "silent"
+            case isSilent = "Silent"
 //            case internalBrowser = "InternalBrowser"
             case frame = "Frame"
         }

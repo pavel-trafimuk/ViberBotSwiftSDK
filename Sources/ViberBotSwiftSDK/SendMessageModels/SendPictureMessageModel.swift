@@ -12,7 +12,7 @@ import ViberSharedSwiftSDK
 public struct PictureMessageRequestModel: Codable, SendMessageRequestCommonValues {
     public init(text: String,
                 media: URL,
-                thumbnail: URL? = nil,
+                thumbnail: URL?,
                 keyboard: UIGridView?,
                 receiver: String,
                 sender: SenderInfo,
@@ -41,7 +41,7 @@ public struct PictureMessageRequestModel: Codable, SendMessageRequestCommonValue
     public let sender: SenderInfo
     public let trackingData: String?
     
-    public let minApiVersion: Int = 7
+    public let minApiVersion: Int = 8
     public let authToken: String
     
     public enum CodingKeys: String, CodingKey {
