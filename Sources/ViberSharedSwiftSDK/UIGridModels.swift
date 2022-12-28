@@ -35,6 +35,13 @@ public struct UIGridView: Codable {
     /// See buttons parameters below for buttons parameters details
     public let buttons: [Button]
     
+    // 1...6
+    public let buttonsGroupColumns: Int?
+    
+    // 1...7
+    public let buttonsGroupRows: Int?
+    
+    
     public enum InputFieldState: String, Codable {
         case regular
         case minimized
@@ -54,9 +61,13 @@ public struct UIGridView: Codable {
         case buttons = "Buttons"
         case backgroundColor = "BgColor"
         case inputFieldState = "InputFieldState"
+        case buttonsGroupColumns = "ButtonsGroupColumns"
+        case buttonsGroupRows = "ButtonsGroupRows"
     }
     
     public static func keyboard(with buttons: [Button],
+                                buttonsGroupColumns: Int? = nil,
+                                buttonsGroupRows: Int? = nil,
                                 isDefaultHeight: Bool = false,
                                 backgroundColor: String? = nil,
                                 inputFieldState: InputFieldState = .regular) -> Self {
@@ -64,7 +75,22 @@ public struct UIGridView: Codable {
               isDefaultHeight: isDefaultHeight,
               backgroundColor: backgroundColor,
               buttons: buttons,
+              buttonsGroupColumns: buttonsGroupColumns,
+              buttonsGroupRows: buttonsGroupRows,
               inputFieldState: inputFieldState)
+    }
+    
+    public static func rich(with buttons: [Button],
+                            buttonsGroupColumns: Int? = nil,
+                            buttonsGroupRows: Int? = nil,
+                            backgroundColor: String? = nil) -> Self {
+        .init(type: .richMedia,
+              isDefaultHeight: nil,
+              backgroundColor: backgroundColor,
+              buttons: buttons,
+              buttonsGroupColumns: buttonsGroupColumns,
+              buttonsGroupRows: buttonsGroupRows,
+              inputFieldState: nil)
     }
 }
 
@@ -115,6 +141,21 @@ extension UIGridView {
         public let textVAlign: String? // middle
         public let textHAlign: String? // center
         
+        public enum OpenUrlType: String, Codable {
+            case `internal`
+            case external
+        }
+        
+        public let openUrlType: OpenUrlType?
+        
+        public enum OpenUrlMediaType: String, Codable {
+            case notMedia = "not-media"
+            case video
+            case gif
+            case picture
+        }
+        public let openUrlMediaType: OpenUrlMediaType?
+        
         // TODO: finish with it
 //        public struct InternalBrowser: Codable {
 //            public actionButton
@@ -160,6 +201,8 @@ extension UIGridView {
                     actionBody: String? = nil,
                     isSilent: Bool? = false,
                     image: URL? = nil,
+                    openUrlType: OpenUrlType? = nil,
+                    openUrlMediaType: OpenUrlMediaType? = nil,
                     text: String? = nil,
                     textSize: UIGridView.Button.TextSize? = nil,
                     textVAlign: String? = nil,
@@ -177,6 +220,8 @@ extension UIGridView {
             self.textVAlign = textVAlign
             self.textHAlign = textHAlign
             self.frame = frame
+            self.openUrlType = openUrlType
+            self.openUrlMediaType = openUrlMediaType
         }
         
         public enum CodingKeys: String, CodingKey {
@@ -193,6 +238,8 @@ extension UIGridView {
             case isSilent = "Silent"
 //            case internalBrowser = "InternalBrowser"
             case frame = "Frame"
+            case openUrlType = "OpenURLType"
+            case openUrlMediaType = "OpenURLMediaType"
         }
     }
 }
