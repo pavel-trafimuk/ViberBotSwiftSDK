@@ -28,6 +28,8 @@ public struct ViberBotController: RouteCollection {
     public init() {}
     
     public func boot(routes: RoutesBuilder) throws {
+        struct EmptyJson: Codable, Content { }
+        
         routes.post(.constant(Constants.callBacksPath)) { req in
             let logger = req.logger
             logger.debug("Received from Bot: \(req.body)")
@@ -39,7 +41,7 @@ public struct ViberBotController: RouteCollection {
             catch {
                 logger.critical("Can't parse model: \(error)")
                 // To stop Viber trying to re-send it
-                return HTTPStatus.ok
+                return CallbackResponse.empty()
             }
             
             switch event {
@@ -97,10 +99,10 @@ public struct ViberBotController: RouteCollection {
                 try await participant.save(on: req.db)
                 
                 if let result = req.application.viberBotHandling.onConversationStarted?(req, model) {
-                    return result
+                    return try CallbackResponse(welcomeMessage: result)
                 }
                 else {
-                    return HTTPStatus.ok
+                    return CallbackResponse.empty()
                 }
                 
             case .message(model: let model):
@@ -133,7 +135,7 @@ public struct ViberBotController: RouteCollection {
             case .action:
                 logger.debug("Action Callback")
             }
-            return HTTPStatus.ok
+            return CallbackResponse.empty()
         }
     }
 }
