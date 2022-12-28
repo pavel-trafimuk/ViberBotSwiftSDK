@@ -10,7 +10,7 @@ import Vapor
 import ViberSharedSwiftSDK
 
 public typealias OnMessageFromUserReceived = (Request, MessageCallbackModel) -> Void
-public typealias OnConversationStarted = (Request, ConversationStartedCallbackModel) -> Void
+public typealias OnConversationStarted = (Request, ConversationStartedCallbackModel) -> TextMessageRequestModel?
 
 public final class IncomesHandlingStorage {
     public var onMessageFromUserReceived: OnMessageFromUserReceived?

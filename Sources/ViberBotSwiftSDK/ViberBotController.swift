@@ -28,7 +28,6 @@ public struct ViberBotController: RouteCollection {
     public init() {}
     
     public func boot(routes: RoutesBuilder) throws {
-        
         routes.post(.constant(Constants.callBacksPath)) { req in
             let logger = req.logger
             logger.debug("Received from Bot: \(req.body)")
@@ -97,8 +96,11 @@ public struct ViberBotController: RouteCollection {
                 participant.status = .subscribed
                 try await participant.save(on: req.db)
                 
-                Task {
-                    req.application.viberBotHandling.onConversationStarted?(req, model)
+                if let result = req.application.viberBotHandling.onConversationStarted?(req, model) {
+                    return result
+                }
+                else {
+                    return HTTPStatus.ok
                 }
                 
             case .message(model: let model):

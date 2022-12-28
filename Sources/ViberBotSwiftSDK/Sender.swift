@@ -109,35 +109,6 @@ public struct Sender {
         
         send(content: message)
     }
-
-    public func sendWelcomeMessage(_ text: String,
-                                   keyboard: UIGridView? = nil,
-                                   trackingData: String?,
-                                   to receiver: String) {
-        let content = TextMessageRequestModel(text: text,
-                                              keyboard: keyboard,
-                                              receiver: receiver,
-                                              sender: senderInfo,
-                                              trackingData: trackingData,
-                                              minApiVersion: minApiVersion,
-                                              authToken: apiKey)
-        Task {
-            do {
-                if request.viberBotConfig.verboseLevel > 1 {
-                    let jsonString = try content.toJSON()
-                    request.logger.debug("Sending Welcome Msg Request: \(jsonString)")
-                }
-                let address = "https://" + (request.peerAddress?.ipAddress ?? "")
-                
-                let response = try await request.client.post(.init(stringLiteral: address),
-                                                             content: content)
-                request.logger.debug("Bot Sending Msg Response: \(response)")
-            }
-            catch {
-                request.logger.error("Error With Sending Msg: \(error)")
-            }
-        }
-    }
 }
 
 extension Request {
