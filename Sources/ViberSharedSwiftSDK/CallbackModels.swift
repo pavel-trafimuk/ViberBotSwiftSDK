@@ -232,10 +232,9 @@ public struct ClientStatusCallbackModel: Codable {
     }
 }
 
-// TODO: fill it with all information
 public struct CallbackUser: Codable {
     public let id: String
-    public let name: String
+    public let name: String?
     public let avatar: String?
     public let country: String
     public let language: String
@@ -248,5 +247,9 @@ public struct CallbackUser: Codable {
         case country
         case language
         case apiVersion = "api_version"
+    }
+    
+    public var nameOrEmptyText: String {
+        name ?? ""
     }
 }

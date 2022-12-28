@@ -1,10 +1,3 @@
-//
-//  File.swift
-//  
-//
-//  Created by Pavel Trafimuk on 17/12/2022.
-//
-
 import Foundation
 import Fluent
 import ViberSharedSwiftSDK
@@ -88,7 +81,7 @@ extension Subscriber {
     
     public func update(with user: CallbackUser) {
         id = user.id
-        name = user.name
+        name = user.name ?? ""
         avatar = user.avatar
         country = user.country
         language = user.language

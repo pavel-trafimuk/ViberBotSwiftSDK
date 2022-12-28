@@ -40,6 +40,23 @@ public struct Sender {
         }
     }
     
+    public func send(random list: [String],
+                     keyboard: UIGridView? = nil,
+                     trackingData: String?,
+                     to receiver: String) {
+        guard let text = list.randomElement() else {
+            return
+        }
+        let message = TextMessageRequestModel(text: text,
+                                              keyboard: keyboard,
+                                              receiver: receiver,
+                                              sender: senderInfo,
+                                              trackingData: trackingData,
+                                              minApiVersion: minApiVersion,
+                                              authToken: apiKey)
+        send(content: message)
+    }
+    
     public func send(text: String,
                      keyboard: UIGridView? = nil,
                      trackingData: String?,

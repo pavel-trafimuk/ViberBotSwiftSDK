@@ -12,20 +12,8 @@ public struct CallbackResponse {
     public init(content: Data?) {
         self.content = content
     }
-    
-    public init(welcomeMessage: TextMessageRequestModel) throws {
-        self.content = try JSONEncoder().encode(welcomeMessage)
-    }
-    
-    public init(welcomeMessage: PictureMessageRequestModel) throws {
-        self.content = try JSONEncoder().encode(welcomeMessage)
-    }
-    
-    public init(welcomeMessage: RichMessageRequestModel) throws {
-        self.content = try JSONEncoder().encode(welcomeMessage)
-    }
-    
-    public init(welcomeMessage: UrlMessageRequestModel) throws {
+
+    public init(welcomeMessage: any SendMessageRequestCommonValues) throws {
         self.content = try JSONEncoder().encode(welcomeMessage)
     }
 }
