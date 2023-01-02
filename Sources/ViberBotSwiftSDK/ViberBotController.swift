@@ -57,46 +57,52 @@ public struct ViberBotController: RouteCollection {
             case .subscribed(model: let model):
                 logger.debug("User subscribed \(model)")
                 
-                let participant: Subscriber
-                if let existing = try await Subscriber.find(model.user.id, on: req.db) {
-                    participant = existing
-                    logger.debug("Already found \(existing.name)")
+                if req.viberBot.config.useDatabase {
+                    let participant: Subscriber
+                    if let existing = try await Subscriber.find(model.user.id, on: req.db) {
+                        participant = existing
+                        logger.debug("Already found \(existing.name)")
+                    }
+                    else {
+                        participant = Subscriber()
+                        logger.debug("A new one for \(model.user)")
+                    }
+                    participant.update(with: model.user)
+                    participant.status = .subscribed
+                    try await participant.save(on: req.db)
                 }
-                else {
-                    participant = Subscriber()
-                    logger.debug("A new one for \(model.user)")
-                }
-                participant.update(with: model.user)
-                participant.status = .subscribed
-                try await participant.save(on: req.db)
                 
             case .unsubscribed(model: let model):
                 logger.debug("User unsubscribed \(model)")
                 
-                if let existing = try await Subscriber.find(model.userId, on: req.db) {
-                    existing.status = .unsubscribed
-                    logger.debug("Already found \(existing.name)")
-                    try await existing.save(on: req.db)
-                }
-                else {
-                    logger.debug("Unsubscribed user \(model.userId) is not found")
+                if req.viberBot.config.useDatabase {
+                    if let existing = try await Subscriber.find(model.userId, on: req.db) {
+                        existing.status = .unsubscribed
+                        logger.debug("Already found \(existing.name)")
+                        try await existing.save(on: req.db)
+                    }
+                    else {
+                        logger.debug("Unsubscribed user \(model.userId) is not found")
+                    }
                 }
                 
             case .conversationStarted(model: let model):
                 logger.debug("Conversation started \(model)")
                 
-                let participant: Subscriber
-                if let existing = try await Subscriber.find(model.user.id, on: req.db) {
-                    participant = existing
-                    logger.debug("Already found \(existing.name)")
+                if req.viberBot.config.useDatabase {
+                    let participant: Subscriber
+                    if let existing = try await Subscriber.find(model.user.id, on: req.db) {
+                        participant = existing
+                        logger.debug("Already found \(existing.name)")
+                    }
+                    else {
+                        participant = Subscriber()
+                        logger.debug("A new one for \(model.user)")
+                    }
+                    participant.update(with: model.user)
+                    participant.status = .subscribed
+                    try await participant.save(on: req.db)
                 }
-                else {
-                    participant = Subscriber()
-                    logger.debug("A new one for \(model.user)")
-                }
-                participant.update(with: model.user)
-                participant.status = .subscribed
-                try await participant.save(on: req.db)
                 
                 if let result = req.viberBot.handling.onConversationStarted?(req, model) {
                     return try CallbackResponse(welcomeMessage: result)
@@ -109,18 +115,20 @@ public struct ViberBotController: RouteCollection {
                 logger.debug("Received msg: \(model)")
                 let participantId = model.sender.id
                 
-                let participant: Subscriber
-                if let existing = try await Subscriber.find(participantId, on: req.db) {
-                    participant = existing
-                    logger.debug("Already found \(existing.name)")
+                if req.viberBot.config.useDatabase {
+                    let participant: Subscriber
+                    if let existing = try await Subscriber.find(participantId, on: req.db) {
+                        participant = existing
+                        logger.debug("Already found \(existing.name)")
+                    }
+                    else {
+                        participant = Subscriber()
+                        logger.debug("A new one for \(model.sender)")
+                    }
+                    participant.update(with: model.sender)
+                    participant.status = .subscribed
+                    try await participant.save(on: req.db)
                 }
-                else {
-                    participant = Subscriber()
-                    logger.debug("A new one for \(model.sender)")
-                }
-                participant.update(with: model.sender)
-                participant.status = .subscribed
-                try await participant.save(on: req.db)
                 
                 Task {
                     req.viberBot.handling.onMessageFromUserReceived?(req, model)
