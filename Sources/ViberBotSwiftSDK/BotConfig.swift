@@ -16,6 +16,7 @@ public final class BotConfig {
                 sendPhoto: Bool = true,
                 defaultSenderInfo: SenderInfo,
                 minApiVersion: Int = 7,
+                useDatabase: Bool = true,
                 verboseLevel: Int = 0) {
         self.apiKey = apiKey
         self.hostAddress = hostAddress
@@ -25,6 +26,7 @@ public final class BotConfig {
         self.verboseLevel = verboseLevel
         self.defaultSenderInfo = defaultSenderInfo
         self.minApiVersion = minApiVersion
+        self.useDatabase = useDatabase
     }
     
     let apiKey: String
@@ -35,33 +37,5 @@ public final class BotConfig {
     public var verboseLevel: Int
     public var defaultSenderInfo: SenderInfo
     public let minApiVersion: Int
-}
-
-extension Application {
-    public struct BotConfigKey: StorageKey {
-        public typealias Value = BotConfig
-    }
-    
-    public var viberBotConfig: BotConfig {
-        get {
-            guard let result = storage[BotConfigKey.self] else {
-                fatalError("Please config ViberBot")
-            }
-            return result
-        }
-        set {
-            storage[BotConfigKey.self] = newValue
-        }
-    }
-}
-
-extension Request {
-    public var viberBotConfig: BotConfig {
-        get {
-            application.viberBotConfig
-        }
-        set {
-            application.viberBotConfig = newValue
-        }
-    }
+    public let useDatabase: Bool
 }

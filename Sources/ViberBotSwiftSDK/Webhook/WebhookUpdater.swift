@@ -11,7 +11,7 @@ public struct WebhookUpdater {
     let app: Application
     
     public func update() async throws {
-        let config = app.viberBotConfig
+        let config = app.viberBot.config
         
         let fullUrl: String = {
             var result = ""
@@ -44,11 +44,5 @@ public struct WebhookUpdater {
         
         let responseModel = try response.content.decode(SetWebhookResponseModel.self)
         app.logger.debug("Webhook result: \(responseModel)")
-    }
-}
-
-extension Application {
-    public var viberBotWebhookUpdater: WebhookUpdater {
-        .init(app: self)
     }
 }

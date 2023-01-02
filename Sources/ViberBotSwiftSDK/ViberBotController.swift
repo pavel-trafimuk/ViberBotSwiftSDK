@@ -98,7 +98,7 @@ public struct ViberBotController: RouteCollection {
                 participant.status = .subscribed
                 try await participant.save(on: req.db)
                 
-                if let result = req.application.viberBotHandling.onConversationStarted?(req, model) {
+                if let result = req.viberBot.handling.onConversationStarted?(req, model) {
                     return try CallbackResponse(welcomeMessage: result)
                 }
                 else {
@@ -123,7 +123,7 @@ public struct ViberBotController: RouteCollection {
                 try await participant.save(on: req.db)
                 
                 Task {
-                    req.application.viberBotHandling.onMessageFromUserReceived?(req, model)
+                    req.viberBot.handling.onMessageFromUserReceived?(req, model)
                 }
                 
             case .webhook(model: let model):

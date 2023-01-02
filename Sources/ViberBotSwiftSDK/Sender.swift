@@ -9,22 +9,22 @@ public struct Sender {
     
     public init(request: Request) {
         self.request = request
-        self.senderInfo = request.viberBotConfig.defaultSenderInfo
+        self.senderInfo = request.viberBot.config.defaultSenderInfo
     }
     
     private var minApiVersion: Int {
-        request.viberBotConfig.minApiVersion
+        request.viberBot.config.minApiVersion
     }
     
     private var apiKey: String {
-        request.viberBotConfig.apiKey
+        request.viberBot.config.apiKey
     }
     
     private func send(content: any Content) {
         // TODO: seems like it's an error
         Task {
             do {
-                let config = request.application.viberBotConfig
+                let config = request.application.viberBot.config
                 let route = Endpoint.sendMessage
                 if config.verboseLevel > 1 {
                     let jsonString = try content.toJSON()
@@ -125,12 +125,6 @@ public struct Sender {
                                               authToken: apiKey)
         
         send(content: message)
-    }
-}
-
-extension Request {
-    public var viberBotSender: Sender {
-        .init(request: self)
     }
 }
 
