@@ -11,7 +11,7 @@ import Vapor
 public final class BotConfig {
     public init(apiKey: String,
                 hostAddress: String,
-                routePath: String,
+                routePath: String = "viber_bot",
                 sendName: Bool = true,
                 sendPhoto: Bool = true,
                 defaultSenderInfo: SenderInfo,

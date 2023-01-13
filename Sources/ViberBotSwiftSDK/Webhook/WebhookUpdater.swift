@@ -10,36 +10,38 @@ import Vapor
 public struct WebhookUpdater {
     let app: Application
     
+    public var fullUrl: String {
+        let host = app.viberBot.config.hostAddress
+        let route = app.viberBot.config.routePath
+        var result = ""
+        if host.hasSuffix("/") {
+            result += host.dropLast()
+        }
+        else {
+            result += host
+        }
+        result += "/"
+        if route.hasPrefix("/") {
+            result += route.dropFirst()
+        }
+        else {
+            result += route
+        }
+        result += "/" + Constants.callBacksPath
+        return result
+    }
+    
     public func update() async throws {
         let config = app.viberBot.config
+        let url = fullUrl
         
-        let fullUrl: String = {
-            var result = ""
-            if config.hostAddress.hasSuffix("/") {
-                result += config.hostAddress.dropLast()
-            }
-            else {
-                result += config.hostAddress
-            }
-            result += "/"
-            if config.routePath.hasPrefix("/") {
-                result += config.routePath.dropFirst()
-            }
-            else {
-                result += config.routePath
-            }
-            result += "/" + Constants.callBacksPath
-            return result
-        }()
-        
-        app.logger.debug("Update webhook to \(fullUrl)")
-        let requestModel = SetWebhookRequestModel(url: fullUrl,
+        app.logger.debug("Update webhook to \(url)")
+        let requestModel = SetWebhookRequestModel(url: url,
                                                   authToken: config.apiKey,
                                                   sendName: config.sendName,
                                                   sendPhoto: config.sendPhoto)
         
-        let endpoint = Endpoint.setWebhook
-        let response = try await app.client.post(.init(stringLiteral: endpoint.urlPath),
+        let response = try await app.client.post(.setWebhook,
                                                  content: requestModel)
         
         let responseModel = try response.content.decode(SetWebhookResponseModel.self)

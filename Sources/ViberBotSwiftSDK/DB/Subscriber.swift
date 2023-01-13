@@ -3,21 +3,21 @@ import Fluent
 import ViberSharedSwiftSDK
 
 public final class Subscriber: Model {
-    // Name of the table or collection.
+    /// Name of the table or collection.
     public static let schema = "subscribers"
 
-    // Unique identifier for the subscriber.
+    /// Unique identifier for the subscriber.
     @ID(custom: "user_id")
     public var id: String?
 
-    // The Subscriber's name.
+    /// The Subscriber's name.
     @Field(key: "name")
     public var name: String
 
     @OptionalField(key: "avatar")
     public var avatar: String?
 
-    // String representable, Codable enum for animal types.
+    /// String representable, Codable enum for animal types.
     public enum Status: String, Codable {
         case subscribed
         case unsubscribed
@@ -53,17 +53,20 @@ public final class Subscriber: Model {
     @OptionalField(key: "mnc")
     public var mnc: Int?
 
-    // to map user with some external services
+    /// to map user with some external services
     @OptionalField(key: "external_id")
     public var externalId: String?
 
     @OptionalField(key: "external_status")
     public var externalStatus: String?
 
-    // Creates a new, empty Subscriber.
+    @OptionalField(key: "external_value")
+    public var externalValue: Data?
+
+    /// Creates a new, empty Subscriber.
     public init() { }
 
-    // Creates a new Subscriber with all properties set.
+    /// Creates a new Subscriber with all properties set.
     public init(id: String,
                 name: String,
                 avatar: String?) {

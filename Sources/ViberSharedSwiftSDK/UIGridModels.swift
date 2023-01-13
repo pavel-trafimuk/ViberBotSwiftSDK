@@ -65,32 +65,62 @@ public struct UIGridView: Codable {
         case buttonsGroupRows = "ButtonsGroupRows"
     }
     
+    public static func keyboard(with buttonBuilders: [UIGridButtonBuilder?],
+                                buttonsGroupColumns: Int? = nil,
+                                buttonsGroupRows: Int? = nil,
+                                isDefaultHeight: Bool = false,
+                                backgroundColor: String? = nil,
+                                inputFieldState: InputFieldState = .regular) throws -> Self {
+        let buttons = try buttonBuilders.map({ builder in
+            try builder?.build()
+        }).compactMap({ $0 })
+        guard !buttons.isEmpty else {
+            throw UIGridError.emptyButtons
+        }
+        
+        return .init(type: .keyboard,
+                     isDefaultHeight: isDefaultHeight,
+                     backgroundColor: backgroundColor,
+                     buttons: buttons,
+                     buttonsGroupColumns: buttonsGroupColumns,
+                     buttonsGroupRows: buttonsGroupRows,
+                     inputFieldState: inputFieldState)
+    }
+    
     public static func keyboard(with buttons: [Button],
                                 buttonsGroupColumns: Int? = nil,
                                 buttonsGroupRows: Int? = nil,
                                 isDefaultHeight: Bool = false,
                                 backgroundColor: String? = nil,
-                                inputFieldState: InputFieldState = .regular) -> Self {
-        .init(type: .keyboard,
-              isDefaultHeight: isDefaultHeight,
-              backgroundColor: backgroundColor,
-              buttons: buttons,
-              buttonsGroupColumns: buttonsGroupColumns,
-              buttonsGroupRows: buttonsGroupRows,
-              inputFieldState: inputFieldState)
+                                inputFieldState: InputFieldState = .regular) throws -> Self {
+        guard !buttons.isEmpty else {
+            throw UIGridError.emptyButtons
+        }
+
+        return .init(type: .keyboard,
+                     isDefaultHeight: isDefaultHeight,
+                     backgroundColor: backgroundColor,
+                     buttons: buttons,
+                     buttonsGroupColumns: buttonsGroupColumns,
+                     buttonsGroupRows: buttonsGroupRows,
+                     inputFieldState: inputFieldState)
     }
     
     public static func rich(with buttons: [Button],
                             buttonsGroupColumns: Int? = nil,
                             buttonsGroupRows: Int? = nil,
-                            backgroundColor: String? = nil) -> Self {
-        .init(type: .richMedia,
-              isDefaultHeight: nil,
-              backgroundColor: backgroundColor,
-              buttons: buttons,
-              buttonsGroupColumns: buttonsGroupColumns,
-              buttonsGroupRows: buttonsGroupRows,
-              inputFieldState: nil)
+                            backgroundColor: String? = nil) throws -> Self {
+        guard !buttons.isEmpty else {
+            throw UIGridError.emptyButtons
+        }
+
+        return .init(type: .richMedia,
+                     isDefaultHeight: nil,
+                     backgroundColor: backgroundColor,
+                     buttons: buttons,
+                     buttonsGroupColumns: buttonsGroupColumns,
+                     buttonsGroupRows: buttonsGroupRows,
+                     inputFieldState: nil)
     }
 }
 

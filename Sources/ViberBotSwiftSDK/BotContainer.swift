@@ -6,13 +6,14 @@
 //
 
 import Vapor
+import Fluent
 
 public protocol ViberBotCommonContainer {
     var app: Application { get }
     var config: BotConfig { get set }
     var handling: IncomesHandlingStorage { get }
     var webhook: WebhookUpdater { get }
-    func prepareDB() throws
+    var info: BotInfo { get }
 }
 
 public extension ViberBotCommonContainer {
@@ -29,12 +30,30 @@ public extension ViberBotCommonContainer {
         app._viberHandling
     }
     
-    // TODO: maybe not correct order
-    func prepareDB() throws {
+    mutating func setup(with config: BotConfig) throws {
         if config.useDatabase {
-            app.databases.use(.sqlite(.file("viberBot.sqlite")), as: .sqlite)
             app.migrations.add(CreateSubscriber())
-            try app.autoMigrate().wait()
+//            try app.autoMigrate().wait()
+        }
+        try app.group(.constant(config.routePath)) { builder in
+            try builder.register(collection: ViberBotController())
+        }
+        self.config = config
+    }
+    
+    func launch() async  {
+        do {
+            let currentInfo = try await self.info.getActualInfo()
+            let webhook = webhook
+            if currentInfo.webhook != webhook.fullUrl {
+                app.logger.debug("Webhook should be changed")
+                app.logger.debug("from \(currentInfo.webhook)")
+                app.logger.debug("to \(webhook.fullUrl)")
+                try await webhook.update()
+            }
+        }
+        catch {
+            app.logger.error("Error: \(error)")
         }
     }
     
@@ -49,6 +68,10 @@ public struct ViberBotAppContainer: ViberBotCommonContainer {
     init(application: Application) {
         self.app = application
     }
+    
+    public var info: BotInfo {
+        .init(app: app, request: nil)
+    }
 }
 
 public struct ViberBotRequestContainer: ViberBotCommonContainer {
@@ -62,6 +85,10 @@ public struct ViberBotRequestContainer: ViberBotCommonContainer {
     
     public var sender: Sender {
         Sender(request: request)
+    }
+    
+    public var info: BotInfo {
+        .init(app: app, request: request)
     }
 }
 

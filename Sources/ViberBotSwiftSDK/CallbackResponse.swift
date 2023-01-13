@@ -2,7 +2,7 @@ import Foundation
 import Vapor
 import ViberSharedSwiftSDK
 
-public struct CallbackResponse {
+public struct CallbackResponse: Content {
     let content: Data?
     
     public static func empty() -> CallbackResponse {
@@ -22,6 +22,7 @@ extension CallbackResponse: AsyncResponseEncodable {
     public func encodeResponse(for request: Request) async throws -> Response {
         var headers = HTTPHeaders()
         headers.add(name: .contentType, value: "application/json")
+        headers.add(name: Constants.authHeaderKey, value: request.viberBot.config.apiKey)
         let body: Response.Body
         if let content {
             body = .init(data: content)

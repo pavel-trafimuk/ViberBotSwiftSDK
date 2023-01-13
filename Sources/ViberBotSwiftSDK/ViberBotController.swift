@@ -8,7 +8,6 @@
 import Foundation
 import Vapor
 import Fluent
-import FluentSQLiteDriver
 import ViberSharedSwiftSDK
 
 // TODO: fix trailing whitespaces
@@ -32,7 +31,9 @@ public struct ViberBotController: RouteCollection {
         
         routes.post(.constant(Constants.callBacksPath)) { req in
             let logger = req.logger
-            logger.debug("Received from Bot: \(req.body)")
+            if req.viberBot.config.verboseLevel > 0 {
+                logger.debug("Bot received: \(req.body)")
+            }
             
             let event: CallbackEvent
             do {
@@ -44,106 +45,142 @@ public struct ViberBotController: RouteCollection {
                 return CallbackResponse.empty()
             }
             
-            switch event {
-            case .delivered(model: let model):
-                logger.debug("Message was delivered \(model.messageToken) for \(model.userId)")
+            do {
                 
-            case .seen(model: let model):
-                logger.debug("Message was seen \(model.messageToken) for \(model.userId)")
-                
-            case .failed(model: let model):
-                logger.error("Message sending failed \(model)")
-                
-            case .subscribed(model: let model):
-                logger.debug("User subscribed \(model)")
-                
-                if req.viberBot.config.useDatabase {
-                    let participant: Subscriber
-                    if let existing = try await Subscriber.find(model.user.id, on: req.db) {
-                        participant = existing
-                        logger.debug("Already found \(existing.name)")
+                switch event {
+                case .delivered(model: let model):
+                    if req.viberBot.config.verboseLevel > 0 {
+                        logger.debug("Message was delivered \(model.messageToken) for \(model.userId)")
+                    }
+                    
+                case .seen(model: let model):
+                    if req.viberBot.config.verboseLevel > 0 {
+                        logger.debug("Message was seen \(model.messageToken) for \(model.userId)")
+                    }
+                    
+                case .failed(model: let model):
+                    logger.error("Message sending failed \(model)")
+                    
+                case .subscribed(model: let model):
+                    if req.viberBot.config.verboseLevel > 0 {
+                        logger.debug("User subscribed \(model)")
+                    }
+                    
+                    try await self.findCreateAndUpdateSubscriber(participant: model.user,
+                                                                 newStatus: .subscribed,
+                                                                 request: req)
+                    
+                case .unsubscribed(model: let model):
+                    if req.viberBot.config.verboseLevel > 0 {
+                        logger.debug("User unsubscribed \(model)")
+                    }
+                    
+                    if req.viberBot.config.useDatabase {
+                        if let existing = try await Subscriber.find(model.userId, on: req.db) {
+                            existing.status = .unsubscribed
+                            if req.viberBot.config.verboseLevel > 0 {
+                                logger.debug("Already found \(existing.name)")
+                            }
+                            try await existing.save(on: req.db)
+                        }
+                        else {
+                            if req.viberBot.config.verboseLevel > 0 {
+                                logger.debug("Unsubscribed user \(model.userId) is not found")
+                            }
+                        }
+                    }
+                    
+                case .conversationStarted(model: let model):
+                    if req.viberBot.config.verboseLevel > 0 {
+                        logger.debug("Conversation started \(model)")
+                    }
+                    
+                    let subscriber = try await self.findCreateAndUpdateSubscriber(participant: model.user,
+                                                                                  newStatus: .subscribed,
+                                                                                  request: req)
+                    
+                    if let result = req.viberBot.handling.onConversationStarted?(req, model, subscriber) {
+                        return try CallbackResponse(welcomeMessage: result)
+                    }
+                    else if let provider = req.viberBot.handling.dialogStepsProvider,
+                            let step = provider.welcomeStepOnConversationStarted(model: model,
+                                                                                 subscriber: subscriber,
+                                                                                 request: req),
+                            let content = step.quickReplyContent(participant: model.user,
+                                                                 request: req) {
+                        return try CallbackResponse(welcomeMessage: content)
                     }
                     else {
-                        participant = Subscriber()
-                        logger.debug("A new one for \(model.user)")
+                        return CallbackResponse.empty()
                     }
-                    participant.update(with: model.user)
-                    participant.status = .subscribed
-                    try await participant.save(on: req.db)
-                }
-                
-            case .unsubscribed(model: let model):
-                logger.debug("User unsubscribed \(model)")
-                
-                if req.viberBot.config.useDatabase {
-                    if let existing = try await Subscriber.find(model.userId, on: req.db) {
-                        existing.status = .unsubscribed
-                        logger.debug("Already found \(existing.name)")
-                        try await existing.save(on: req.db)
+                    
+                case .message(model: let model):
+                    if req.viberBot.config.verboseLevel > 1 {
+                        logger.debug("Received msg: \(model)")
                     }
-                    else {
-                        logger.debug("Unsubscribed user \(model.userId) is not found")
+                    else if req.viberBot.config.verboseLevel > 0 {
+                        logger.debug("Received msg: \(model.message.text ?? "<no text>") from \(model.sender.name ?? model.sender.id)")
                     }
-                }
-                
-            case .conversationStarted(model: let model):
-                logger.debug("Conversation started \(model)")
-                
-                if req.viberBot.config.useDatabase {
-                    let participant: Subscriber
-                    if let existing = try await Subscriber.find(model.user.id, on: req.db) {
-                        participant = existing
-                        logger.debug("Already found \(existing.name)")
+                    
+                    let subscriber = try await self.findCreateAndUpdateSubscriber(participant: model.sender,
+                                                                                  newStatus: .subscribed,
+                                                                                  request: req)
+                    
+                    _ = req.application.eventLoopGroup.next().performWithTask {
+                        logger.debug("Start handling")
+                        req.viberBot.handling.onMessageFromUserReceived?(req, model, subscriber)
+                        
+                        if let provider = req.viberBot.handling.dialogStepsProvider {
+                            let handler = DialogHandler(provider: provider, request: req)
+                            handler.onMessageReceived(model: model,
+                                                      subscriber: subscriber)
+                        }
                     }
-                    else {
-                        participant = Subscriber()
-                        logger.debug("A new one for \(model.user)")
+                    
+                case .webhook(model: let model):
+                    if req.viberBot.config.verboseLevel > 1 {
+                        logger.debug("Webhook \(model)")
                     }
-                    participant.update(with: model.user)
-                    participant.status = .subscribed
-                    try await participant.save(on: req.db)
+                    
+                case .clientStatus(model: let model):
+                    logger.debug("Client Status \(model)")
+                    
+                case .action:
+                    logger.debug("Action Callback")
                 }
-                
-                if let result = req.viberBot.handling.onConversationStarted?(req, model) {
-                    return try CallbackResponse(welcomeMessage: result)
-                }
-                else {
-                    return CallbackResponse.empty()
-                }
-                
-            case .message(model: let model):
-                logger.debug("Received msg: \(model)")
-                let participantId = model.sender.id
-                
-                if req.viberBot.config.useDatabase {
-                    let participant: Subscriber
-                    if let existing = try await Subscriber.find(participantId, on: req.db) {
-                        participant = existing
-                        logger.debug("Already found \(existing.name)")
-                    }
-                    else {
-                        participant = Subscriber()
-                        logger.debug("A new one for \(model.sender)")
-                    }
-                    participant.update(with: model.sender)
-                    participant.status = .subscribed
-                    try await participant.save(on: req.db)
-                }
-                
-                Task {
-                    req.viberBot.handling.onMessageFromUserReceived?(req, model)
-                }
-                
-            case .webhook(model: let model):
-                logger.debug("Webhook \(model)")
-                
-            case .clientStatus(model: let model):
-                logger.debug("Client Status \(model)")
-                
-            case .action:
-                logger.debug("Action Callback")
+            }
+            catch {
+                logger.debug("Error: \(error)")
             }
             return CallbackResponse.empty()
         }
+    }
+    
+    @discardableResult
+    private func findCreateAndUpdateSubscriber(participant: CallbackUser,
+                                               newStatus: Subscriber.Status?,
+                                               request: Request) async throws -> Subscriber? {
+        guard request.viberBot.config.useDatabase else {
+            return nil
+        }
+        let logger = request.logger
+        
+        let subscriber: Subscriber
+        if let existing = try await Subscriber.find(participant.id, on: request.db) {
+            subscriber = existing
+            if request.viberBot.config.verboseLevel > 0 {
+                logger.debug("Already found \(existing.name)")
+            }
+        }
+        else {
+            subscriber = Subscriber()
+            if request.viberBot.config.verboseLevel > 0 {
+                logger.debug("A new one for \(participant)")
+            }
+        }
+        subscriber.update(with: participant)
+        subscriber.status = newStatus
+        try await subscriber.save(on: request.db)
+        return subscriber
     }
 }
