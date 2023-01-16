@@ -171,7 +171,7 @@ extension Sender {
                                               minApiVersion: minApiVersion,
                                               authToken: apiKey,
                                               isSilent: isSilent)
-        send(content: message)
+        broadcast(content: message)
     }
     
     public func broadcast(image: String,
@@ -200,7 +200,7 @@ extension Sender {
                                                  minApiVersion: minApiVersion,
                                                  authToken: apiKey,
                                                  isSilent: isSilent)
-        send(content: message)
+        broadcast(content: message)
     }
     
     public func broadcast(url: URL,
@@ -218,7 +218,7 @@ extension Sender {
                                              authToken: apiKey,
                                              isSilent: isSilent)
         
-        send(content: message)
+        broadcast(content: message)
     }
 
     public func broadcast(rich: UIGridView,
@@ -235,7 +235,7 @@ extension Sender {
                                               minApiVersion: minApiVersion,
                                               authToken: apiKey)
         
-        send(content: message)
+        broadcast(content: message)
     }
 
 }
