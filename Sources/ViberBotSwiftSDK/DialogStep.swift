@@ -20,7 +20,7 @@ public protocol DialogStep: Identifiable {
     
     /// keyboard which will be send with text above
     /// default value is nil
-    var keyboardFromBot: UIGridView? { get }
+    var keyboardFromBot: UIGridViewBuilder? { get }
     
     /// any custom logic, which you want to execute, when participant starts this step
     func onStepWasStartedFromViberMessage(_ message: MessageCallbackModel,
@@ -48,7 +48,7 @@ public extension DialogStep {
         nil
     }
     
-    var keyboardFromBot: UIGridView? {
+    var keyboardFromBot: UIGridViewBuilder? {
         nil
     }
 
@@ -57,8 +57,21 @@ public extension DialogStep {
         guard let texts = textsFromBot else {
             return
         }
+        let keyboard: UIGridView?
+        do {
+            if let builder = keyboardFromBot {
+                keyboard = try builder.build()
+            }
+            else {
+                keyboard = nil
+            }
+        }
+        catch {
+            request.logger.error("Can't build keyboard: \(error)")
+            keyboard = nil
+        }
         request.viberBot.sender.send(random: texts,
-                                     keyboard: keyboardFromBot,
+                                     keyboard: keyboard,
                                      trackingData: id,
                                      to: participantId)
     }
@@ -68,8 +81,21 @@ public extension DialogStep {
         guard let text = textsFromBot?.randomElement() else {
             return nil
         }
+        let keyboard: UIGridView?
+        do {
+            if let builder = keyboardFromBot {
+                keyboard = try builder.build()
+            }
+            else {
+                keyboard = nil
+            }
+        }
+        catch {
+            request.logger.error("Can't build keyboard: \(error)")
+            keyboard = nil
+        }
         return TextMessageRequestModel(text: text,
-                                       keyboard: keyboardFromBot,
+                                       keyboard: keyboard,
                                        receiver: participant.id,
                                        sender: request.viberBot.config.defaultSenderInfo,
                                        trackingData: id,

@@ -24,9 +24,9 @@ extension String {
 }
 
 extension String {
-    public static var white: String { "#ffffff "}
+    public static var white: String { "#ffffff"}
 
-    public static var black: String { "#000000 "}
+    public static var black: String { "#000000"}
     
-    public static var viberPurple: String { "#7360F2 "}
+    public static var viberPurple: String { "#7360F2"}
 }

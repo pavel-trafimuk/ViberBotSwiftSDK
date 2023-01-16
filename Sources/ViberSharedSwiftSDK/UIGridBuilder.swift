@@ -44,6 +44,12 @@ public final class UIGridViewBuilder {
         return self
     }
 
+    private var _buttonsBuilders: [UIGridButtonBuilder]?
+    public func buttons(_ newValue: [UIGridButtonBuilder?]) -> Self {
+        _buttonsBuilders = newValue.compactMap{ $0}
+        return self
+    }
+    
     private var _buttonsGroupColumns: Int?
     public func buttonsGroupColumns(_ newValue: Int) -> Self {
         _buttonsGroupColumns = newValue
@@ -66,13 +72,20 @@ public final class UIGridViewBuilder {
         guard let _type else {
             throw UIGridBuilderError.typeNotProvided
         }
-        guard let _buttons else {
+        let buttons: [UIGridView.Button]
+        if let _buttons {
+            buttons = _buttons
+        }
+        else if let _buttonsBuilders {
+            buttons = try _buttonsBuilders.map { try $0.build() }
+        }
+        else {
             throw UIGridBuilderError.buttonsNotProvided
         }
         return UIGridView(type: _type,
                           isDefaultHeight: _isDefaultHeight,
                           backgroundColor: _backgroundColor,
-                          buttons: _buttons,
+                          buttons: buttons,
                           buttonsGroupColumns: _buttonsGroupColumns,
                           buttonsGroupRows: _buttonsGroupRows,
                           inputFieldState: _inputFieldState)
