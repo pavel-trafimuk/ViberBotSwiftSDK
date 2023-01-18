@@ -45,7 +45,7 @@ public struct DialogHandler {
                                             trackingData: model.message.trackingData) {
             request.logger.debug("Found that user strictly selected: \(step.id)")
             
-            step.quickReplyOnStepStart(participantId: model.sender.id,
+            step.quickReplyOnStepStart(participant: model.sender,
                                        request: request)
             step.onStepWasStartedFromViberMessage(model,
                                                   subscriber: subscriber,
@@ -70,7 +70,7 @@ public struct DialogHandler {
                                                        subscriber: subscriber,
                                                        request: request) {
             request.logger.debug("Found that user sent undefined (free talk) message, fall to \(step.id)")
-            step.quickReplyOnStepStart(participantId: model.sender.id,
+            step.quickReplyOnStepStart(participant: model.sender,
                                        request: request)
             step.onStepWasStartedFromViberMessage(model,
                                                   subscriber: subscriber,

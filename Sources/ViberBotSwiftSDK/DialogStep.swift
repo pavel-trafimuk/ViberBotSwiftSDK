@@ -52,11 +52,19 @@ public extension DialogStep {
         nil
     }
 
-    func quickReplyOnStepStart(participantId: String,
+    func quickReplyOnStepStart(participant: ViberSharedSwiftSDK.CallbackUser,
                                request: Request) {
         guard let texts = textsFromBot else {
             return
         }
+        // TODO: make it everywhere (in sender?)
+        var resultTexts = [String]()
+        for source in texts {
+            let updated = source.replacingOccurrences(of: Constants.usernamePlaceholder,
+                                                      with: participant.nameOrEmptyText)
+            resultTexts.append(updated)
+        }
+
         let keyboard: UIGridView?
         do {
             if let builder = keyboardFromBot {
@@ -70,10 +78,10 @@ public extension DialogStep {
             request.logger.error("Can't build keyboard: \(error)")
             keyboard = nil
         }
-        request.viberBot.sender.send(random: texts,
+        request.viberBot.sender.send(random: resultTexts,
                                      keyboard: keyboard,
                                      trackingData: id,
-                                     to: participantId)
+                                     to: participant.id)
     }
     
     func quickReplyContent(participant: ViberSharedSwiftSDK.CallbackUser,
