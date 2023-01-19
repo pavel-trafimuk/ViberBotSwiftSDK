@@ -33,7 +33,6 @@ public extension ViberBotCommonContainer {
     mutating func setup(with config: BotConfig) throws {
         if config.useDatabase {
             app.migrations.add(CreateSubscriber())
-//            try app.autoMigrate().wait()
         }
         try app.group(.constant(config.routePath)) { builder in
             try builder.register(collection: ViberBotController())

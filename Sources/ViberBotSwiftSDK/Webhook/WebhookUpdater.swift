@@ -40,10 +40,12 @@ public struct WebhookUpdater {
                                                   authToken: config.apiKey,
                                                   sendName: config.sendName,
                                                   sendPhoto: config.sendPhoto)
-        
         let response = try await app.client.post(.setWebhook,
                                                  content: requestModel)
-        
+        if app.viberBot.config.verboseLevel > 1 {
+            app.logger.debug("Webhook response: \(response)")
+        }
+
         let responseModel = try response.content.decode(SetWebhookResponseModel.self)
         app.logger.debug("Webhook result: \(responseModel)")
     }
