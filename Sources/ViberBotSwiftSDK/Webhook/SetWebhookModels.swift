@@ -49,7 +49,9 @@ public struct SetWebhookRequestModel: Codable, Content {
 public struct SetWebhookResponseModel: Codable {
     
     let status: ResponseStatus
-    let statusMessage: String
+    
+    // we found that server sometimes doesn't send a status message
+    let statusMessage: String?
     
     // TODO: add failable behavior, to decode even if event is unknown
     let eventTypes: [CallbackEventType]?

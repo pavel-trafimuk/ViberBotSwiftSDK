@@ -47,6 +47,11 @@ public struct WebhookUpdater {
         }
 
         let responseModel = try response.content.decode(SetWebhookResponseModel.self)
-        app.logger.debug("Webhook result: \(responseModel)")
+        guard responseModel.status == .ok else {
+            app.logger.error("Webhook is not updated")
+            app.logger.error("Error: \(responseModel)")
+            return
+        }
+        app.logger.debug("Webhook was updated")
     }
 }
