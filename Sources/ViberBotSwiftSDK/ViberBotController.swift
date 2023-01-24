@@ -31,6 +31,10 @@ public struct ViberBotController: RouteCollection {
         
         routes.post(.constant(Constants.callBacksPath)) { req in
             let logger = req.logger
+            guard req.isValidViberCallback() else {
+                logger.error("Request not from Viber")
+                return CallbackResponse.empty()
+            }
             if req.viberBot.config.verboseLevel > 0 {
                 logger.debug("Bot received: \(req.body)")
             }

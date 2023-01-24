@@ -42,6 +42,19 @@ public struct Sender {
     }
     
     public func send(random list: [String],
+                     keyboard: UIGridViewBuilder? = nil,
+                     trackingData: String?,
+                     isSilent: Bool = false,
+                     to receiver: String) {
+        let builtKeyboard = try? keyboard?.build()
+        send(random: list,
+             keyboard: builtKeyboard,
+             trackingData: trackingData,
+             isSilent: isSilent,
+             to: receiver)
+    }
+    
+    public func send(random list: [String],
                      keyboard: UIGridView? = nil,
                      trackingData: String?,
                      isSilent: Bool = false,
@@ -51,6 +64,19 @@ public struct Sender {
         }
         send(text: text,
              keyboard: keyboard,
+             trackingData: trackingData,
+             isSilent: isSilent,
+             to: receiver)
+    }
+
+    public func send(text: String,
+                     keyboard: UIGridViewBuilder? = nil,
+                     trackingData: String?,
+                     isSilent: Bool = false,
+                     to receiver: String) {
+        let builtKeyboard = try? keyboard?.build()
+        send(text: text,
+             keyboard: builtKeyboard,
              trackingData: trackingData,
              isSilent: isSilent,
              to: receiver)
@@ -70,6 +96,23 @@ public struct Sender {
                                               authToken: apiKey,
                                               isSilent: isSilent)
         send(content: message)
+    }
+
+    public func send(image: String,
+                     thumbnail: String?,
+                     description: String = "",
+                     keyboard: UIGridViewBuilder? = nil,
+                     trackingData: String?,
+                     isSilent: Bool = false,
+                     to receiver: String) {
+        let builtKeyboard = try? keyboard?.build()
+        send(image: image,
+             thumbnail: thumbnail,
+             description: description,
+             keyboard: builtKeyboard,
+             trackingData: trackingData,
+             isSilent: isSilent,
+             to: receiver)
     }
     
     public func send(image: String,

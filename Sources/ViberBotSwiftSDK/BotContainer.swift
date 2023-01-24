@@ -46,7 +46,7 @@ public extension ViberBotCommonContainer {
             let webhook = webhook
             if currentInfo.webhook != webhook.fullUrl {
                 app.logger.debug("Webhook should be changed")
-                app.logger.debug("from \(currentInfo.webhook)")
+                app.logger.debug("from \(currentInfo.webhook ?? "nil")")
                 app.logger.debug("to \(webhook.fullUrl)")
                 try await webhook.update()
             }
