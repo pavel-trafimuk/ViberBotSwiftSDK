@@ -105,9 +105,35 @@ public final class UIGridButtonBuilder {
     }
     
     private var _backgroundColor: String?
-    
     public func backgroundColor(_ newValue: String) -> Self {
         _backgroundColor = newValue
+        return self
+    }
+    
+    private var _backgroundMediaType: UIGridView.Button.BackgroundMediaType?
+    public func backgroundMediaType(_ newValue: UIGridView.Button.BackgroundMediaType) -> Self {
+        _backgroundMediaType = newValue
+        return self
+    }
+    
+    private var _backgroundMedia: URL?
+    public func backgroundMedia(_ newValue: URL) -> Self {
+        _backgroundMedia = newValue
+        return self
+    }
+
+    private var _backgroundScaleType: UIGridView.Button.MediaScaleType?
+    public func backgroundScaleType(_ newValue: UIGridView.Button.MediaScaleType) -> Self {
+        _backgroundScaleType = newValue
+        return self
+    }
+    
+    public func background(_ url: URL,
+                           type: UIGridView.Button.BackgroundMediaType = .picture,
+                           scale: UIGridView.Button.MediaScaleType? = nil) -> Self {
+        _backgroundMedia = url
+        _backgroundMediaType = type
+        _backgroundScaleType = scale
         return self
     }
     
@@ -201,6 +227,9 @@ public final class UIGridButtonBuilder {
         return UIGridView.Button.init(columns: _columns,
                                       rows: _rows,
                                       backgroundColor: _backgroundColor,
+                                      backgroundMediaType: _backgroundMediaType,
+                                      backgroundMedia: _backgroundMedia,
+                                      backgroundScaleType: _backgroundScaleType,
                                       actionType: _actionType,
                                       actionBody: _actionBody,
                                       isSilent: _isSilent,

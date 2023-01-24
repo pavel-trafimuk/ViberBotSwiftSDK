@@ -138,6 +138,30 @@ extension UIGridView {
 
         public let isSilent: Bool?
         
+        public enum BackgroundMediaType: String, Codable {
+            /// JPEG and PNG files are supported. Max size: 500 kb
+            case picture
+            
+            case gif
+        }
+        
+        public let backgroundMediaType: BackgroundMediaType?
+        
+        /// URL for background media content (picture or gif). Will be placed with aspect to fill logic
+        public let backgroundMedia: URL?
+        
+        public enum MediaScaleType: String, Codable {
+            /// contents scaled to fill with fixed aspect. some portion of content may be clipped
+            case crop
+            /// contents scaled to fill without saving fixed aspect
+            case fill
+            /// at least one axis (X or Y) will fit exactly, aspect is saved
+            case fit
+        }
+        
+        /// Options for scaling the bounds of the background to the bounds of this view, api level 6
+        public let backgroundScaleType: MediaScaleType?
+        
         /// Type of action pressing the button will perform.
         /// Reply - will send a reply to the bot.
         /// open-url - will open the specified URL and send the URL as reply to the bot.
@@ -227,6 +251,9 @@ extension UIGridView {
         public init(columns: Int,
                     rows: Int,
                     backgroundColor: String? = nil,
+                    backgroundMediaType: BackgroundMediaType? = nil,
+                    backgroundMedia: URL? = nil,
+                    backgroundScaleType: MediaScaleType? = nil,
                     actionType: UIGridView.Button.ActionType,
                     actionBody: String? = nil,
                     isSilent: Bool? = false,
@@ -241,6 +268,9 @@ extension UIGridView {
             self.columns = columns
             self.rows = rows
             self.backgroundColor = backgroundColor
+            self.backgroundMediaType = backgroundMediaType
+            self.backgroundMedia = backgroundMedia
+            self.backgroundScaleType = backgroundScaleType
             self.actionType = actionType
             self.actionBody = actionBody
             self.image = image
@@ -258,6 +288,9 @@ extension UIGridView {
             case columns = "Columns"
             case rows = "Rows"
             case backgroundColor = "BgColor"
+            case backgroundMediaType = "BgMediaType"
+            case backgroundMedia = "BgMedia"
+            case backgroundScaleType = "BgMediaScaleType"
             case actionType = "ActionType"
             case actionBody = "ActionBody"
             case image = "Image"
