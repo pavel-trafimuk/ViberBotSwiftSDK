@@ -65,9 +65,13 @@ public extension DialogStep {
     
     func quickReplyContent(participant: ViberSharedSwiftSDK.CallbackUser,
                            request: Request) -> (any SendMessageRequestCommonValues)? {
-        guard let text = getTextsFromBot(request: request)?.randomElement() else {
+        guard var text = getTextsFromBot(request: request)?.randomElement() else {
             return nil
         }
+        // TODO: make it everywhere (in sender?)
+        text = text.replacingOccurrences(of: Constants.usernamePlaceholder,
+                                         with: participant.nameOrEmptyText)
+
         let keyboard: UIGridView?
         do {
             if let builder = getKeyboardFromBot(request: request) {
