@@ -135,9 +135,9 @@ public struct ViberBotController: RouteCollection {
                         req.viberBot.handling.onMessageFromUserReceived?(req, model, subscriber)
                         
                         if let provider = req.viberBot.handling.dialogStepsProvider {
-                            let handler = DialogHandler(provider: provider, request: req)
-                            handler.onMessageReceived(model: model,
-                                                      subscriber: subscriber)
+                            provider.onMessageReceived(model: model,
+                                                       subscriber: subscriber,
+                                                       request: req)
                         }
                     }
                     

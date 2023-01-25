@@ -12,15 +12,15 @@ import ViberSharedSwiftSDK
 public protocol DialogStep: Identifiable {
     
     /// to quickly generate buttons for menu
-    static var keyboardButtonRepresentation: UIGridButtonBuilder? { get }
+    static func getKeyboardButtonRepresentation(request: Request) -> UIGridButtonBuilder?
 
     /// random text will be sent to the participant when this step will be start,
     /// default value is nil
-    var textsFromBot: [String]? { get }
+    func getTextsFromBot(request: Request) -> [String]?
     
     /// keyboard which will be send with text above
     /// default value is nil
-    var keyboardFromBot: UIGridViewBuilder? { get }
+    func getKeyboardFromBot(request: Request) -> UIGridViewBuilder?
     
     /// any custom logic, which you want to execute, when participant starts this step
     func onStepWasStartedFromViberMessage(_ message: MessageCallbackModel,
@@ -44,17 +44,9 @@ public extension DialogStep {
         "step://_\(String(describing: type(of: self)))_"
     }
     
-    var textsFromBot: [String]? {
-        nil
-    }
-    
-    var keyboardFromBot: UIGridViewBuilder? {
-        nil
-    }
-
     func quickReplyOnStepStart(participant: ViberSharedSwiftSDK.CallbackUser,
                                request: Request) {
-        guard let texts = textsFromBot else {
+        guard let texts = getTextsFromBot(request: request) else {
             return
         }
         // TODO: make it everywhere (in sender?)
@@ -65,33 +57,20 @@ public extension DialogStep {
             resultTexts.append(updated)
         }
 
-        let keyboard: UIGridView?
-        do {
-            if let builder = keyboardFromBot {
-                keyboard = try builder.build()
-            }
-            else {
-                keyboard = nil
-            }
-        }
-        catch {
-            request.logger.error("Can't build keyboard: \(error)")
-            keyboard = nil
-        }
         request.viberBot.sender.send(random: resultTexts,
-                                     keyboard: keyboard,
+                                     keyboard: getKeyboardFromBot(request: request),
                                      trackingData: id,
                                      to: participant.id)
     }
     
     func quickReplyContent(participant: ViberSharedSwiftSDK.CallbackUser,
                            request: Request) -> (any SendMessageRequestCommonValues)? {
-        guard let text = textsFromBot?.randomElement() else {
+        guard let text = getTextsFromBot(request: request)?.randomElement() else {
             return nil
         }
         let keyboard: UIGridView?
         do {
-            if let builder = keyboardFromBot {
+            if let builder = getKeyboardFromBot(request: request) {
                 keyboard = try builder.build()
             }
             else {

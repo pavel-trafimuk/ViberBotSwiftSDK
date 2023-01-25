@@ -12,7 +12,7 @@ import ViberSharedSwiftSDK
 public protocol DialogStepsProvider {
     
     /// will be ask to find step, which user could select from keyboards menu
-    var allSteps: [any DialogStep] { get }
+    func getAllAvailableSteps(request: Request) -> [any DialogStep]
     
     /// will be asked when user open bot's conversation
     func welcomeStepOnConversationStarted(model: ConversationStartedCallbackModel,
@@ -25,24 +25,17 @@ public protocol DialogStepsProvider {
                                  request: Request) -> (any DialogStep)?
 }
 
-public struct DialogHandler {
-    let provider: DialogStepsProvider
-    let request: Request
-    
-    public init(provider: DialogStepsProvider,
-                request: Request) {
-        self.provider = provider
-        self.request = request
-    }
-    
+extension DialogStepsProvider {
     /// main handler logic
     func onMessageReceived(model: MessageCallbackModel,
-                           subscriber: Subscriber?) {
-        let allSteps = provider.allSteps
+                           subscriber: Subscriber?,
+                           request: Request) {
+        let allSteps = getAllAvailableSteps(request: request)
 
         // first let's try to find - maybe user selected any menu
         if let step = allSteps.selectedStep(byText: model.message.text,
-                                            trackingData: model.message.trackingData) {
+                                            trackingData: model.message.trackingData,
+                                            request: request) {
             request.logger.debug("Found that user strictly selected: \(step.id)")
             
             step.quickReplyOnStepStart(participant: model.sender,
@@ -66,9 +59,9 @@ public struct DialogHandler {
         }
         
         // finally, user just something to write to us, it's not a menu or answer
-        if let step = provider.stepForUndefinedMessage(model,
-                                                       subscriber: subscriber,
-                                                       request: request) {
+        if let step = stepForUndefinedMessage(model,
+                                              subscriber: subscriber,
+                                              request: request) {
             request.logger.debug("Found that user sent undefined (free talk) message, fall to \(step.id)")
             step.quickReplyOnStepStart(participant: model.sender,
                                        request: request)
@@ -82,26 +75,25 @@ public struct DialogHandler {
 
 extension Array where Element == any DialogStep {
     func selectedStep(byText text: String?,
-                      trackingData: String?) -> Element? {
-        print("4444")
+                      trackingData: String?,
+                      request: Request) -> Element? {
         // check by id
         if let found = first(where: { $0.id == text }) {
             return found
         }
-        print("5555")
 
-        // now compare the text
-        // TODO: describe this issue more detail
-//        if let found = first(where: { step in
-//            if let button = try? step.keyboardButtonRepresentation?.build(),
-//               let actionBody = button.actionBody,
-//               actionBody == text {
-//                return true
-//            }
-//            return false
-//        }) {
-//            return found
-//        }
+        // also if step was with openUrl, it will sent the url to the bot(
+        if let found = first(where: { step in
+            guard
+                let builder = type(of: step).getKeyboardButtonRepresentation(request: request),
+                builder._actionType == .openUrl
+            else {
+                return false
+            }
+            return builder._actionBody == text
+        }) {
+            return found
+        }
         
         return nil
     }

@@ -144,14 +144,14 @@ public final class UIGridButtonBuilder {
         return self
     }
     
-    private var _actionType: UIGridView.Button.ActionType?
+    public private(set) var _actionType: UIGridView.Button.ActionType?
     public func action(_ type: UIGridView.Button.ActionType, body: String?) -> Self {
         _actionType = type
         _actionBody = body
         return self
     }
     
-    private var _actionBody: String?
+    public private(set) var _actionBody: String?
 
     private var _image: URL?
     public func image(_ newValue: URL) -> Self {
