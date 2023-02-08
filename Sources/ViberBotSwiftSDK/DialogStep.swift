@@ -12,15 +12,18 @@ import ViberSharedSwiftSDK
 public protocol DialogStep: Identifiable {
     
     /// to quickly generate buttons for menu
-    static func getKeyboardButtonRepresentation(request: Request) -> UIGridButtonBuilder?
+    static func getKeyboardButtonRepresentation(participantLanguage: String,
+                                                request: Request) -> UIGridButtonBuilder?
 
     /// random text will be sent to the participant when this step will be start,
     /// default value is nil
-    func getTextsFromBot(request: Request) -> [String]?
+    func getTextsFromBot(participantLanguage: String,
+                         request: Request) -> [String]?
     
     /// keyboard which will be send with text above
     /// default value is nil
-    func getKeyboardFromBot(request: Request) -> UIGridViewBuilder?
+    func getKeyboardFromBot(participantLanguage: String,
+                            request: Request) -> UIGridViewBuilder?
     
     /// any custom logic, which you want to execute, when participant starts this step
     func onStepWasStartedFromViberMessage(_ message: MessageCallbackModel,
@@ -46,7 +49,8 @@ public extension DialogStep {
     
     func quickReplyOnStepStart(participant: ViberSharedSwiftSDK.CallbackUser,
                                request: Request) {
-        guard let texts = getTextsFromBot(request: request) else {
+        guard let texts = getTextsFromBot(participantLanguage: participant.language,
+                                          request: request) else {
             return
         }
         // TODO: make it everywhere (in sender?)
@@ -58,14 +62,16 @@ public extension DialogStep {
         }
 
         request.viberBot.sender.send(random: resultTexts,
-                                     keyboard: getKeyboardFromBot(request: request),
+                                     keyboard: getKeyboardFromBot(participantLanguage: participant.language,
+                                                                  request: request),
                                      trackingData: id,
                                      to: participant.id)
     }
     
     func quickReplyContent(participant: ViberSharedSwiftSDK.CallbackUser,
                            request: Request) -> (any SendMessageRequestCommonValues)? {
-        guard var text = getTextsFromBot(request: request)?.randomElement() else {
+        guard var text = getTextsFromBot(participantLanguage: participant.language,
+                                         request: request)?.randomElement() else {
             return nil
         }
         // TODO: make it everywhere (in sender?)
@@ -74,7 +80,8 @@ public extension DialogStep {
 
         let keyboard: UIGridView?
         do {
-            if let builder = getKeyboardFromBot(request: request) {
+            if let builder = getKeyboardFromBot(participantLanguage: participant.language,
+                                                request: request) {
                 keyboard = try builder.build()
             }
             else {
