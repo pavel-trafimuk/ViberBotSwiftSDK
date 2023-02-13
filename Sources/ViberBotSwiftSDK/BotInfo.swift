@@ -1,10 +1,3 @@
-//
-//  File.swift
-//  
-//
-//  Created by Pavel Trafimuk on 12/01/2023.
-//
-
 import Foundation
 import Vapor
 
@@ -46,7 +39,6 @@ public struct BotInfo {
                                              ], beforeSend: { req in
                                                  //
                                              })
-        logger.debug("GetActualInfo response: \(response)")
         let responseModel = try response.content.decode(GetAccountInfo.self)
         logger.debug("GetActualInfo result: \(responseModel)")
         app.storage[BotInfoKey.self] = responseModel

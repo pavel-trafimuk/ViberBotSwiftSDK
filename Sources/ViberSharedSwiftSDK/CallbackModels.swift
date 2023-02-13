@@ -181,7 +181,7 @@ public struct MessageCallbackModel: Codable {
         public let fileSize: Int?
         public let duration: Double?
         
-        public let stickerId: String?
+        public let stickerId: Int?
         
         public enum CodingKeys: String, CodingKey {
             case type = "type"

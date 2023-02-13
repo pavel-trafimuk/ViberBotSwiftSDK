@@ -1,10 +1,3 @@
-//
-//  File.swift
-//  
-//
-//  Created by Pavel Trafimuk on 10/01/2023.
-//
-
 import Foundation
 import Vapor
 import ViberSharedSwiftSDK

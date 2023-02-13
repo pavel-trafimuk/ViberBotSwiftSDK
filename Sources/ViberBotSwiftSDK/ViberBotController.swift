@@ -1,10 +1,3 @@
-//
-//  ViberBot.swift
-//  
-//
-//  Created by Pavel Trafimuk on 04/11/2022.
-//
-
 import Foundation
 import Vapor
 import Fluent

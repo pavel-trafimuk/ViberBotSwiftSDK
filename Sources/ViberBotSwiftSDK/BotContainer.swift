@@ -1,10 +1,3 @@
-//
-//  File.swift
-//  
-//
-//  Created by Pavel Trafimuk on 02/01/2023.
-//
-
 import Vapor
 import Fluent
 

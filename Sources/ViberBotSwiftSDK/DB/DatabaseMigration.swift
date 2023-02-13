@@ -1,10 +1,3 @@
-//
-//  File.swift
-//  
-//
-//  Created by Pavel Trafimuk on 17/12/2022.
-//
-
 import Foundation
 import Fluent
 
