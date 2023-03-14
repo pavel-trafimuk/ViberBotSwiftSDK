@@ -24,6 +24,7 @@ public struct ViberBotController: RouteCollection {
         
         routes.post(.constant(Constants.callBacksPath)) { req in
             let logger = req.logger
+
             guard req.isValidViberCallback() else {
                 logger.error("Request not from Viber")
                 return CallbackResponse.empty()
@@ -103,7 +104,8 @@ public struct ViberBotController: RouteCollection {
                             let step = provider.welcomeStepOnConversationStarted(model: model,
                                                                                  subscriber: subscriber,
                                                                                  request: req),
-                            let content = step.quickReplyContent(participant: model.user,
+                            let content = step.getWelcomeMessageContent(participant: model.user,
+                                                                 previousTrackingData: nil,
                                                                  request: req) {
                         return try CallbackResponse(welcomeMessage: content)
                     }

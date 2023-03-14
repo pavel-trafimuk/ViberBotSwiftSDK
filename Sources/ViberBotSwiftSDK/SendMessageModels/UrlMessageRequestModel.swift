@@ -14,7 +14,7 @@ public struct UrlMessageRequestModel: Codable, SendMessageRequestCommonValues {
     
     public let messageType: MessageType = .url
     public let sender: SenderInfo
-    public let trackingData: String?
+    public let rawTrackingData: String?
     
     public let minApiVersion: Int
     public let authToken: String
@@ -28,7 +28,7 @@ public struct UrlMessageRequestModel: Codable, SendMessageRequestCommonValues {
                 receiver: String?,
                 broadcastList: [String]? = nil,
                 sender: SenderInfo,
-                trackingData: String?,
+                rawTrackingData: String? = nil,
                 minApiVersion: Int,
                 authToken: String,
                 isSilent: Bool = false) {
@@ -36,7 +36,27 @@ public struct UrlMessageRequestModel: Codable, SendMessageRequestCommonValues {
         self.receiver = receiver
         self.broadcastList = broadcastList
         self.sender = sender
-        self.trackingData = trackingData
+        self.rawTrackingData = rawTrackingData
+        self.minApiVersion = minApiVersion
+        self.authToken = authToken
+        self.keyboard = keyboard
+        self.isSilent = isSilent
+    }
+    
+    public init(media: URL,
+                keyboard: UIGridView?,
+                receiver: String?,
+                broadcastList: [String]? = nil,
+                sender: SenderInfo,
+                trackingData: TrackingData? = nil,
+                minApiVersion: Int,
+                authToken: String,
+                isSilent: Bool = false) {
+        self.media = media
+        self.receiver = receiver
+        self.broadcastList = broadcastList
+        self.sender = sender
+        self.rawTrackingData = try? trackingData?.toJSON()
         self.minApiVersion = minApiVersion
         self.authToken = authToken
         self.keyboard = keyboard
@@ -50,7 +70,7 @@ public struct UrlMessageRequestModel: Codable, SendMessageRequestCommonValues {
         case messageType = "type"
         case sender
         case authToken = "auth_token"
-        case trackingData = "tracking_data"
+        case rawTrackingData = "tracking_data"
         case minApiVersion = "min_api_version"
         case keyboard
         case isSilent = "silent"

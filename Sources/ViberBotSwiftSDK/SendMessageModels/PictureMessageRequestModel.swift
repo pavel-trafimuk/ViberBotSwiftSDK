@@ -25,7 +25,7 @@ public struct PictureMessageRequestModel: Codable, SendMessageRequestCommonValue
     
     public let messageType: MessageType = .picture
     public let sender: SenderInfo
-    public let trackingData: String?
+    public let rawTrackingData: String?
     
     public let minApiVersion: Int
     public let authToken: String
@@ -39,7 +39,7 @@ public struct PictureMessageRequestModel: Codable, SendMessageRequestCommonValue
                 receiver: String?,
                 broadcastList: [String]? = nil,
                 sender: SenderInfo,
-                trackingData: String? = nil,
+                rawTrackingData: String? = nil,
                 minApiVersion: Int,
                 authToken: String,
                 isSilent: Bool = false) {
@@ -49,7 +49,31 @@ public struct PictureMessageRequestModel: Codable, SendMessageRequestCommonValue
         self.receiver = receiver
         self.broadcastList = broadcastList
         self.sender = sender
-        self.trackingData = trackingData
+        self.rawTrackingData = rawTrackingData
+        self.authToken = authToken
+        self.keyboard = keyboard
+        self.minApiVersion = minApiVersion
+        self.isSilent = isSilent
+    }
+    
+    public init(text: String,
+                media: URL,
+                thumbnail: URL?,
+                keyboard: UIGridView? = nil,
+                receiver: String?,
+                broadcastList: [String]? = nil,
+                sender: SenderInfo,
+                trackingData: TrackingData? = nil,
+                minApiVersion: Int,
+                authToken: String,
+                isSilent: Bool = false) {
+        self.text = text
+        self.media = media
+        self.thumbnail = thumbnail
+        self.receiver = receiver
+        self.broadcastList = broadcastList
+        self.sender = sender
+        self.rawTrackingData = try? trackingData?.toJSON()
         self.authToken = authToken
         self.keyboard = keyboard
         self.minApiVersion = minApiVersion
@@ -65,7 +89,7 @@ public struct PictureMessageRequestModel: Codable, SendMessageRequestCommonValue
         case messageType = "type"
         case sender
         case authToken = "auth_token"
-        case trackingData = "tracking_data"
+        case rawTrackingData = "tracking_data"
         case minApiVersion = "min_api_version"
         case keyboard = "keyboard"
         case isSilent = "silent"

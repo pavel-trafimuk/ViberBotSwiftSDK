@@ -20,15 +20,13 @@ public protocol DialogStep: Identifiable {
     
     /// any custom logic, which you want to execute, when participant starts this step
     func onStepWasStartedFromViberMessage(_ message: MessageCallbackModel,
-                                          subscriber: Subscriber?,
-                                          request: Request)
+                                          replier: QuickReplier)
 
     func onStepWasStartedFromExternalEvent(request: Request) async throws
 
     /// response logic, when bot receives user answer
     func onUserAnswer(message: MessageCallbackModel,
-                      subscriber: Subscriber?,
-                      request: Request)
+                      replier: QuickReplier)
 }
 
 public extension DialogStep {
@@ -40,29 +38,37 @@ public extension DialogStep {
         "step://_\(String(describing: type(of: self)))_"
     }
     
-    func quickReplyOnStepStart(participant: ViberSharedSwiftSDK.CallbackUser,
-                               request: Request) {
-        guard let texts = getTextsFromBot(participantLanguage: participant.language,
-                                          request: request) else {
-            return
-        }
-        // TODO: make it everywhere (in sender?)
-        var resultTexts = [String]()
-        for source in texts {
-            let updated = source.replacingOccurrences(of: Constants.usernamePlaceholder,
-                                                      with: participant.nameOrEmptyText)
-            resultTexts.append(updated)
-        }
-
-        request.viberBot.sender.send(random: resultTexts,
-                                     keyboard: getKeyboardFromBot(participantLanguage: participant.language,
-                                                                  request: request),
-                                     trackingData: id,
-                                     to: participant.id)
+    func executeStepStarting(model: MessageCallbackModel,
+                             previousTrackingData: TrackingData?,
+                             foundSubscriber: Subscriber?,
+                             request: Request) {
+        let finalTracking = previousTrackingData ?? model.message.trackingData
+        var replier = QuickReplier(participant: model.sender,
+                                   foundSubscriber: foundSubscriber,
+                                   previousTrackingData: finalTracking,
+                                   step: self,
+                                   request: request)
+        
+        quickReplyOnStepStart(participant: model.sender,
+                              replier: replier)
+        onStepWasStartedFromViberMessage(model,
+                                         replier: replier)
     }
     
-    func quickReplyContent(participant: ViberSharedSwiftSDK.CallbackUser,
-                           request: Request) -> (any SendMessageRequestCommonValues)? {
+    func quickReplyOnStepStart(participant: ViberSharedSwiftSDK.CallbackUser,
+                               replier: QuickReplier) {
+        guard let texts = getTextsFromBot(participantLanguage: participant.language,
+                                          request: replier.request) else {
+            return
+        }
+        Task {
+            replier.send(random: texts)
+        }
+    }
+    
+    func getWelcomeMessageContent(participant: ViberSharedSwiftSDK.CallbackUser,
+                                  previousTrackingData: TrackingData?,
+                                  request: Request) -> (any SendMessageRequestCommonValues)? {
         guard var text = getTextsFromBot(participantLanguage: participant.language,
                                          request: request)?.randomElement() else {
             return nil
@@ -85,11 +91,12 @@ public extension DialogStep {
             request.logger.error("Can't build keyboard: \(error)")
             keyboard = nil
         }
+        let tracking = TrackingData(previous: previousTrackingData, activeStep: id)
         return TextMessageRequestModel(text: text,
                                        keyboard: keyboard,
                                        receiver: participant.id,
                                        sender: request.viberBot.config.defaultSenderInfo,
-                                       trackingData: id,
+                                       trackingData: tracking,
                                        minApiVersion: request.viberBot.config.minApiVersion,
                                        authToken: request.viberBot.config.apiKey)
 

@@ -165,10 +165,20 @@ public struct MessageCallbackModel: Codable {
         public let type: MessageType
         public let text: String?
         
-    //    URL of the message media - can be image, video, file and url. Image/Video/File URLs will have a TTL of 1 hour
+        /// URL of the message media - can be image, video, file and url. Image/Video/File URLs will have a TTL of 1 hour
         public let media: URL?
-        public let trackingData: String?
+        public let rawTrackingData: String?
 
+        public var trackingData: TrackingData? {
+            guard let string = rawTrackingData,
+                  !string.isEmpty,
+                  let data = string.data(using: .utf8)
+            else {
+                return nil
+            }
+            return try? JSONDecoder().decode(TrackingData.self, from: data)
+        }
+        
         // TODO: implement
     //    "location":{
     //       "lat":50.76891,
@@ -187,7 +197,7 @@ public struct MessageCallbackModel: Codable {
             case type = "type"
             case text
             case media
-            case trackingData = "tracking_data"
+            case rawTrackingData = "tracking_data"
             case fileName = "file_name"
             case fileSize = "file_size"
             case duration
@@ -214,13 +224,13 @@ public struct ClientStatusCallbackModel: Codable {
         public let type: String
         public let code: Int
         public let supportedPSPs: [String]
-        public let trackingData: String?
+        public let rawTrackingData: String?
         
         public enum CodingKeys: String, CodingKey {
             case type
             case code
             case supportedPSPs = "supported_psps"
-            case trackingData = "tracking_data"
+            case rawTrackingData = "tracking_data"
         }
     }
 

@@ -2,8 +2,6 @@ import Foundation
 import Vapor
 import ViberSharedSwiftSDK
 
-// TODO: add more specific sender with predefined participant?
-
 /// Short life structure for sending msgs
 public struct Sender {
     private let request: Request
@@ -23,7 +21,6 @@ public struct Sender {
     }
     
     private func send(content: any Content) {
-        // TODO: seems like it's an error
         Task {
             do {
                 let config = request.application.viberBot.config
@@ -36,27 +33,59 @@ public struct Sender {
                 request.logger.debug("Sending Msg Response: \(response)")
             }
             catch {
-                request.logger.error("Error With Sending Msg: \(error)")
+                logError(error)
             }
+        }
+    }
+    
+    private func logError(_ error: Error) {
+        request.logger.error("Error With Sending Msg: \(error)")
+        if !request.application.environment.isRelease {
+            // TODO: improve it
+//                    send(text: "Error With Sending Msg: \(error)",
+//                         trackingData: nil,
+//                         to: <#T##String#>)
         }
     }
     
     public func send(random list: [String],
                      keyboard: UIGridViewBuilder? = nil,
-                     trackingData: String?,
+                     trackingData: TrackingData?,
                      isSilent: Bool = false,
                      to receiver: String) {
-        let builtKeyboard = try? keyboard?.build()
-        send(random: list,
-             keyboard: builtKeyboard,
-             trackingData: trackingData,
-             isSilent: isSilent,
-             to: receiver)
+        do {
+            send(random: list,
+                 keyboard: keyboard,
+                 rawTrackingData: try trackingData?.toJSON(),
+                 isSilent: isSilent,
+                 to: receiver)
+        }
+        catch {
+            logError(error)
+        }
+    }
+    
+    public func send(random list: [String],
+                     keyboard: UIGridViewBuilder? = nil,
+                     rawTrackingData: String?,
+                     isSilent: Bool = false,
+                     to receiver: String) {
+        do {
+            let builtKeyboard = try keyboard?.build()
+            send(random: list,
+                 keyboard: builtKeyboard,
+                 rawTrackingData: rawTrackingData,
+                 isSilent: isSilent,
+                 to: receiver)
+        }
+        catch {
+            logError(error)
+        }
     }
     
     public func send(random list: [String],
                      keyboard: UIGridView? = nil,
-                     trackingData: String?,
+                     rawTrackingData: String?,
                      isSilent: Bool = false,
                      to receiver: String) {
         guard let text = list.randomElement() else {
@@ -64,34 +93,56 @@ public struct Sender {
         }
         send(text: text,
              keyboard: keyboard,
-             trackingData: trackingData,
+             rawTrackingData: rawTrackingData,
              isSilent: isSilent,
              to: receiver)
     }
 
     public func send(text: String,
                      keyboard: UIGridViewBuilder? = nil,
-                     trackingData: String?,
+                     trackingData: TrackingData?,
                      isSilent: Bool = false,
                      to receiver: String) {
-        let builtKeyboard = try? keyboard?.build()
-        send(text: text,
-             keyboard: builtKeyboard,
-             trackingData: trackingData,
-             isSilent: isSilent,
-             to: receiver)
+        do {
+            send(text: text,
+                 keyboard: keyboard,
+                 rawTrackingData: try trackingData?.toJSON(),
+                 isSilent: isSilent,
+                 to: receiver)
+        }
+        catch {
+            logError(error)
+        }
+    }
+    
+    public func send(text: String,
+                     keyboard: UIGridViewBuilder? = nil,
+                     rawTrackingData: String?,
+                     isSilent: Bool = false,
+                     to receiver: String) {
+        do {
+            let builtKeyboard = try keyboard?.build()
+            send(text: text,
+                 keyboard: builtKeyboard,
+                 rawTrackingData: rawTrackingData,
+                 isSilent: isSilent,
+                 to: receiver)
+        }
+        catch {
+            logError(error)
+        }
     }
     
     public func send(text: String,
                      keyboard: UIGridView? = nil,
-                     trackingData: String?,
+                     rawTrackingData: String?,
                      isSilent: Bool = false,
                      to receiver: String) {
         let message = TextMessageRequestModel(text: text,
                                               keyboard: keyboard,
                                               receiver: receiver,
                                               sender: senderInfo,
-                                              trackingData: trackingData,
+                                              rawTrackingData: rawTrackingData,
                                               minApiVersion: minApiVersion,
                                               authToken: apiKey,
                                               isSilent: isSilent)
@@ -102,24 +153,50 @@ public struct Sender {
                      thumbnail: String?,
                      description: String = "",
                      keyboard: UIGridViewBuilder? = nil,
-                     trackingData: String?,
+                     trackingData: TrackingData?,
                      isSilent: Bool = false,
                      to receiver: String) {
-        let builtKeyboard = try? keyboard?.build()
-        send(image: image,
-             thumbnail: thumbnail,
-             description: description,
-             keyboard: builtKeyboard,
-             trackingData: trackingData,
-             isSilent: isSilent,
-             to: receiver)
+        do {
+            send(image: image,
+                 thumbnail: thumbnail,
+                 description: description,
+                 keyboard: keyboard,
+                 rawTrackingData: try trackingData?.toJSON(),
+                 isSilent: isSilent,
+                 to: receiver)
+        }
+        catch {
+            logError(error)
+        }
+    }
+    
+    public func send(image: String,
+                     thumbnail: String?,
+                     description: String = "",
+                     keyboard: UIGridViewBuilder? = nil,
+                     rawTrackingData: String?,
+                     isSilent: Bool = false,
+                     to receiver: String) {
+        do {
+            let builtKeyboard = try keyboard?.build()
+            send(image: image,
+                 thumbnail: thumbnail,
+                 description: description,
+                 keyboard: builtKeyboard,
+                 rawTrackingData: rawTrackingData,
+                 isSilent: isSilent,
+                 to: receiver)
+        }
+        catch {
+            logError(error)
+        }
     }
     
     public func send(image: String,
                      thumbnail: String?,
                      description: String = "",
                      keyboard: UIGridView? = nil,
-                     trackingData: String?,
+                     rawTrackingData: String?,
                      isSilent: Bool = false,
                      to receiver: String) {
         guard let url = URL(string: image) else { return }
@@ -136,7 +213,7 @@ public struct Sender {
                                                  keyboard: keyboard,
                                                  receiver: receiver,
                                                  sender: senderInfo,
-                                                 trackingData: trackingData,
+                                                 rawTrackingData: rawTrackingData,
                                                  minApiVersion: minApiVersion,
                                                  authToken: apiKey,
                                                  isSilent: isSilent)
@@ -145,14 +222,14 @@ public struct Sender {
     
     public func send(url: URL,
                      keyboard: UIGridView? = nil,
-                     trackingData: String?,
+                     rawTrackingData: String?,
                      isSilent: Bool = false,
                      to receiver: String) {
         let message = UrlMessageRequestModel(media: url,
                                              keyboard: keyboard,
                                              receiver: receiver,
                                              sender: senderInfo,
-                                             trackingData: trackingData,
+                                             rawTrackingData: rawTrackingData,
                                              minApiVersion: minApiVersion,
                                              authToken: apiKey,
                                              isSilent: isSilent)
@@ -160,16 +237,40 @@ public struct Sender {
         send(content: message)
     }
 
+    public func send(rich: UIGridViewBuilder,
+                     keyboard: UIGridViewBuilder? = nil,
+                     trackingData: TrackingData?,
+                     isSilent: Bool = false,
+                     to receiver: String) {
+        do {
+            let builtKeyboard = try keyboard?.build()
+            let builtRich = try rich.build()
+            let message = RichMessageRequestModel(richMedia: builtRich,
+                                                  keyboard: builtKeyboard,
+                                                  receiver: receiver,
+                                                  sender: senderInfo,
+                                                  trackingData: trackingData,
+                                                  minApiVersion: minApiVersion,
+                                                  authToken: apiKey,
+                                                  isSilent: isSilent)
+            
+            send(content: message)
+        }
+        catch {
+            logError(error)
+        }
+    }
+    
     public func send(rich: UIGridView,
                      keyboard: UIGridView? = nil,
-                     trackingData: String?,
+                     rawTrackingData: String?,
                      isSilent: Bool = false,
                      to receiver: String) {
         let message = RichMessageRequestModel(richMedia: rich,
                                               keyboard: keyboard,
                                               receiver: receiver,
                                               sender: senderInfo,
-                                              trackingData: trackingData,
+                                              rawTrackingData: rawTrackingData,
                                               minApiVersion: minApiVersion,
                                               authToken: apiKey,
                                               isSilent: isSilent)
@@ -202,7 +303,7 @@ extension Sender {
     
     public func broadcast(text: String,
                           keyboard: UIGridView? = nil,
-                          trackingData: String?,
+                          rawTrackingData: String?,
                           isSilent: Bool = false,
                           to receivers: [String]) {
         let message = TextMessageRequestModel(text: text,
@@ -210,7 +311,7 @@ extension Sender {
                                               receiver: nil,
                                               broadcastList: receivers,
                                               sender: senderInfo,
-                                              trackingData: trackingData,
+                                              rawTrackingData: rawTrackingData,
                                               minApiVersion: minApiVersion,
                                               authToken: apiKey,
                                               isSilent: isSilent)
@@ -221,7 +322,7 @@ extension Sender {
                           thumbnail: String?,
                           description: String = "",
                           keyboard: UIGridView? = nil,
-                          trackingData: String?,
+                          rawTrackingData: String?,
                           isSilent: Bool = false,
                           to receivers: [String]) {
         guard let url = URL(string: image) else { return }
@@ -239,7 +340,7 @@ extension Sender {
                                                  receiver: nil,
                                                  broadcastList: receivers,
                                                  sender: senderInfo,
-                                                 trackingData: trackingData,
+                                                 rawTrackingData: rawTrackingData,
                                                  minApiVersion: minApiVersion,
                                                  authToken: apiKey,
                                                  isSilent: isSilent)
@@ -248,7 +349,7 @@ extension Sender {
     
     public func broadcast(url: URL,
                           keyboard: UIGridView? = nil,
-                          trackingData: String?,
+                          rawTrackingData: String?,
                           isSilent: Bool = false,
                           to receivers: [String]) {
         let message = UrlMessageRequestModel(media: url,
@@ -256,7 +357,7 @@ extension Sender {
                                              receiver: nil,
                                              broadcastList: receivers,
                                              sender: senderInfo,
-                                             trackingData: trackingData,
+                                             rawTrackingData: rawTrackingData,
                                              minApiVersion: minApiVersion,
                                              authToken: apiKey,
                                              isSilent: isSilent)
@@ -266,7 +367,7 @@ extension Sender {
 
     public func broadcast(rich: UIGridView,
                           keyboard: UIGridView? = nil,
-                          trackingData: String?,
+                          rawTrackingData: String?,
                           isSilent: Bool = false,
                           to receivers: [String]) {
         let message = RichMessageRequestModel(richMedia: rich,
@@ -274,7 +375,7 @@ extension Sender {
                                               receiver: nil,
                                               broadcastList: receivers,
                                               sender: senderInfo,
-                                              trackingData: trackingData,
+                                              rawTrackingData: rawTrackingData,
                                               minApiVersion: minApiVersion,
                                               authToken: apiKey)
         

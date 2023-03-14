@@ -25,31 +25,33 @@ extension DialogStepsProvider {
                            request: Request) {
         let allSteps = getAllAvailableSteps(request: request)
         let participantLanguage = model.sender.language
-
+        let trackingData = model.message.trackingData
+        
         // first let's try to find - maybe user selected any menu
         if let step = allSteps.selectedStep(byText: model.message.text,
-                                            trackingData: model.message.trackingData,
                                             participantLanguage: participantLanguage,
                                             request: request) {
             request.logger.debug("Found that user strictly selected: \(step.id)")
             
-            step.quickReplyOnStepStart(participant: model.sender,
-                                       request: request)
-            step.onStepWasStartedFromViberMessage(model,
-                                                  subscriber: foundSubscriber,
-                                                  request: request)
+            step.executeStepStarting(model: model,
+                                     previousTrackingData: trackingData,
+                                     foundSubscriber: foundSubscriber,
+                                     request: request)
             return
         }
 
         // second, maybe user answer on specific step
-        if let trackingData = model.message.trackingData,
-           let step = allSteps.first(where: { $0.id == trackingData }) {
+        if let trackingData,
+           let step = allSteps.first(where: { $0.id == trackingData.activeStep }) {
             request.logger.debug("Found that user answered on \(step.id)")
-            
             // it's a response from user
+            var replier = QuickReplier(participant: model.sender,
+                                       foundSubscriber: foundSubscriber,
+                                       previousTrackingData: trackingData,
+                                       step: step,
+                                       request: request)
             step.onUserAnswer(message: model,
-                              subscriber: foundSubscriber,
-                              request: request)
+                              replier: replier)
             return
         }
         
@@ -58,11 +60,10 @@ extension DialogStepsProvider {
                                               subscriber: foundSubscriber,
                                               request: request) {
             request.logger.debug("Found that user sent undefined (free talk) message, fall to \(step.id)")
-            step.quickReplyOnStepStart(participant: model.sender,
-                                       request: request)
-            step.onStepWasStartedFromViberMessage(model,
-                                                  subscriber: foundSubscriber,
-                                                  request: request)
+            step.executeStepStarting(model: model,
+                                     previousTrackingData: trackingData,
+                                     foundSubscriber: foundSubscriber,
+                                     request: request)
         }
         
     }
@@ -70,7 +71,6 @@ extension DialogStepsProvider {
 
 extension Array where Element == any DialogStep {
     func selectedStep(byText text: String?,
-                      trackingData: String?,
                       participantLanguage: String,
                       request: Request) -> Element? {
         // check by id

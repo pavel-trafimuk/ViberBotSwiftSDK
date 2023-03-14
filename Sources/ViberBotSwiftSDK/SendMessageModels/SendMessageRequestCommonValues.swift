@@ -16,7 +16,19 @@ public protocol SendMessageRequestCommonValues: Content {
     var keyboard: UIGridView? { get }
 
     /// context of talking
-    var trackingData: String? { get }
+    var rawTrackingData: String? { get }
     
     var minApiVersion: Int { get }
+}
+
+extension SendMessageRequestCommonValues {
+    var trackingData: TrackingData? {
+        guard let string = rawTrackingData,
+              !string.isEmpty,
+              let data = string.data(using: .utf8)
+        else {
+            return nil
+        }
+        return try? JSONDecoder().decode(TrackingData.self, from: data)
+    }
 }

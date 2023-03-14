@@ -233,7 +233,7 @@ final class CallbackEventTests: XCTestCase {
             XCTAssert(model.timestamp == 1457764197627)
             XCTAssert(model.sender.name == "John McClane")
             XCTAssert(model.message.text == "a message to the service")
-            XCTAssert(model.message.trackingData == "tracking data")
+            XCTAssert(model.message.rawTrackingData == "tracking data")
             XCTAssert(model.message.media == URL(string: "http://example.com"))
         }
         else {
