@@ -89,7 +89,9 @@ public struct QuickReplier {
     }
     
     private func getFinalTrackingData(_ custom: TrackingData?) -> TrackingData? {
-        custom ?? .init(previous: previousTrackingData, activeStep: step.id)
+        var result = custom ?? .init(previous: previousTrackingData, activeStep: step.id)
+        result.pruneHistory()
+        return result
     }
     
     private func getFinalKeyboard(_ custom: UIGridViewBuilder?) -> UIGridViewBuilder? {

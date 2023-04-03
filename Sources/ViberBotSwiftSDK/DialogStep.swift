@@ -29,13 +29,23 @@ public protocol DialogStep: Identifiable {
                       replier: QuickReplier)
 }
 
+public enum DialogStepConstants {
+    static let stepPrefix = "s☧://"
+    
+    public static func isStepIdentifier(_ check: String) -> Bool {
+        check.hasPrefix(DialogStepConstants.stepPrefix)
+    }
+    
+}
+
 public extension DialogStep {
+    
     static var identifier: String {
-        "step://_\(String(describing: self))_"
+        "\(DialogStepConstants.stepPrefix)\(String(describing: self))"
     }
     
     var id: String {
-        "step://_\(String(describing: type(of: self)))_"
+        "\(DialogStepConstants.stepPrefix)\(String(describing: type(of: self)))"
     }
     
     func executeStepStarting(model: MessageCallbackModel,
