@@ -5,6 +5,7 @@ public struct TrackingData: Codable, Content {
 
     public enum Constants {
         public static let maxLength = 4096
+        public static let languageKey = "lng"
     }
     
     /// to reduce final size as we have limits
@@ -84,7 +85,7 @@ public struct TrackingData: Codable, Content {
         
         if let activeStep {
             result += 2 // double " in key
-            result += CodingKeys.activeStep.rawValue.lengthOfBytes(using: .utf8) // key
+            result += CodingKeys.activeStep.rawValue.replacingOccurrences(of: "/", with: "\\/").lengthOfBytes(using: .utf8) // key
             result += 1 // :
             result += 2 // double " in value
             result += activeStep.lengthOfBytes(using: .utf8) // value
@@ -94,7 +95,7 @@ public struct TrackingData: Codable, Content {
         }
         if let storage {
             result += 2 // double " in key
-            result += CodingKeys.storage.rawValue.lengthOfBytes(using: .utf8)
+            result += CodingKeys.storage.rawValue.replacingOccurrences(of: "/", with: "\\/").lengthOfBytes(using: .utf8)
             result += 1 // :
             result += storage.lengthCountInJson
             if history != nil {
@@ -108,7 +109,7 @@ public struct TrackingData: Codable, Content {
         var result = lengthCountWithoutHistory
         if let history {
             result += 2 // double " in key
-            result += CodingKeys.history.rawValue.lengthOfBytes(using: .utf8)
+            result += CodingKeys.history.rawValue.replacingOccurrences(of: "/", with: "\\/").lengthOfBytes(using: .utf8)
             result += 1 // :
             result += history.lengthCountInJson
         }
@@ -130,11 +131,30 @@ public struct TrackingData: Codable, Content {
     }
 }
 
+extension TrackingData {
+    public var preferredLanguageCode: String? {
+        get {
+            storage?[Constants.languageKey]
+        }
+        set {
+            guard let newValue else {
+                // no need to create
+                storage?[Constants.languageKey] = nil
+                return
+            }
+            
+            if storage == nil {
+                storage = [:]
+            }
+            storage?[Constants.languageKey] = newValue
+        }
+    }
+}
 
 
 extension TrackingData.HistoryItem {
     var lengthCountInJson: Int {
-        jsonValue.lengthOfBytes(using: .utf8)
+        jsonValue.replacingOccurrences(of: "/", with: "\\/").lengthOfBytes(using: .utf8)
     }
 }
 
@@ -157,10 +177,10 @@ extension Dictionary where Key == String, Value == String {
         var result = 2 // brackets
         for tuple in self {
             result += 2 // double " in key
-            result += tuple.key.lengthOfBytes(using: .utf8)
+            result += tuple.key.replacingOccurrences(of: "/", with: "\\/").lengthOfBytes(using: .utf8)
             result += 1 // :
             result += 2 // double " in value
-            result += tuple.value.lengthOfBytes(using: .utf8)
+            result += tuple.value.replacingOccurrences(of: "/", with: "\\/").lengthOfBytes(using: .utf8)
         }
         if !self.isEmpty {
             result += self.count - 1 // , after each tuple

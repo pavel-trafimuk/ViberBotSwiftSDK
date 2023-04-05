@@ -125,7 +125,7 @@ public struct ViberBotController: RouteCollection {
                                                                                   newStatus: .subscribed,
                                                                                   request: req)
                     
-                    _ = req.application.eventLoopGroup.next().performWithTask {
+                    _ = req.application.eventLoopGroup.next().makeFutureWithTask {
                         logger.debug("Start handling")
                         req.viberBot.handling.onMessageFromUserReceived?(req, model, subscriber)
                         

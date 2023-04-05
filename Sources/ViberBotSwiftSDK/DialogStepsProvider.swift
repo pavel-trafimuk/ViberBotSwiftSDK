@@ -24,12 +24,12 @@ extension DialogStepsProvider {
                            foundSubscriber: Subscriber?,
                            request: Request) {
         let allSteps = getAllAvailableSteps(request: request)
-        let participantLanguage = model.sender.language
         let trackingData = model.message.trackingData
-        
+        let preferredLanguage = trackingData?.preferredLanguageCode ?? model.sender.language
+
         // first let's try to find - maybe user selected any menu
         if let step = allSteps.selectedStep(byText: model.message.text,
-                                            participantLanguage: participantLanguage,
+                                            preferredLanguage: preferredLanguage,
                                             request: request) {
             request.logger.debug("Found that user strictly selected: \(step.id)")
             
@@ -45,7 +45,7 @@ extension DialogStepsProvider {
            let step = allSteps.first(where: { $0.id == trackingData.activeStep }) {
             request.logger.debug("Found that user answered on \(step.id)")
             // it's a response from user
-            var replier = QuickReplier(participant: model.sender,
+            let replier = QuickReplier(participant: model.sender,
                                        foundSubscriber: foundSubscriber,
                                        previousTrackingData: trackingData,
                                        step: step,
@@ -71,7 +71,7 @@ extension DialogStepsProvider {
 
 extension Array where Element == any DialogStep {
     func selectedStep(byText text: String?,
-                      participantLanguage: String,
+                      preferredLanguage: String,
                       request: Request) -> Element? {
         // check by id
         if let found = first(where: { $0.id == text }) {
@@ -81,7 +81,7 @@ extension Array where Element == any DialogStep {
         // also if step was with openUrl, it will send the url to the bot(
         if let found = first(where: { step in
             guard
-                let builder = type(of: step).getKeyboardButtonRepresentation(participantLanguage: participantLanguage,
+                let builder = type(of: step).getKeyboardButtonRepresentation(preferredLanguage: preferredLanguage,
                                                                              request: request),
                 builder._actionType == .openUrl
             else {

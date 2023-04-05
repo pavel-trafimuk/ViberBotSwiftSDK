@@ -16,7 +16,10 @@ public struct QuickReplier {
     }
 
     public let participant: CallbackUser
-    public var participantLanguage: String { participant.language }
+    
+    public var preferredLanguage: String {
+        previousTrackingData?.preferredLanguageCode ?? participant.language
+    }
     public let foundSubscriber: Subscriber?
 
     public let previousTrackingData: TrackingData?
@@ -95,6 +98,6 @@ public struct QuickReplier {
     }
     
     private func getFinalKeyboard(_ custom: UIGridViewBuilder?) -> UIGridViewBuilder? {
-        custom ?? step.getKeyboardFromBot(participantLanguage: participant.language, request: request)
+        custom ?? step.getKeyboardFromBot(preferredLanguage: preferredLanguage, request: request)
     }
 }

@@ -183,6 +183,9 @@ extension UIGridView {
         /// Valid URL. JPEG and PNG files are supported. Max size: 500 kb
         public let image: URL?
         
+        /// Options for scaling the bounds of an image to the bounds of this view
+        public let imageScaleType: MediaScaleType?
+        
         public let text: String?
         
         public enum TextSize: String, Codable {
@@ -258,6 +261,7 @@ extension UIGridView {
                     actionBody: String? = nil,
                     isSilent: Bool? = false,
                     image: URL? = nil,
+                    imageScaleType: MediaScaleType? = nil,
                     openUrlType: OpenUrlType? = nil,
                     openUrlMediaType: OpenUrlMediaType? = nil,
                     text: String? = nil,
@@ -274,6 +278,7 @@ extension UIGridView {
             self.actionType = actionType
             self.actionBody = actionBody
             self.image = image
+            self.imageScaleType = imageScaleType
             self.isSilent = isSilent
             self.text = text
             self.textSize = textSize
@@ -294,6 +299,7 @@ extension UIGridView {
             case actionType = "ActionType"
             case actionBody = "ActionBody"
             case image = "Image"
+            case imageScaleType = "ImageScaleType"
             case text = "Text"
             case textSize = "TextSize"
             case textVAlign = "TextVAlign"

@@ -158,6 +158,12 @@ public final class UIGridButtonBuilder {
         _image = newValue
         return self
     }
+    
+    private var _imageScaleType: UIGridView.Button.MediaScaleType?
+    public func imageScaleType(_ newValue: UIGridView.Button.MediaScaleType) -> Self {
+        _imageScaleType = newValue
+        return self
+    }
 
     private var _text: String?
     public func text(_ newValue: String?) -> Self {
@@ -234,6 +240,7 @@ public final class UIGridButtonBuilder {
                                       actionBody: _actionBody,
                                       isSilent: _isSilent,
                                       image: _image,
+                                      imageScaleType: _imageScaleType,
                                       openUrlType: _openUrlType,
                                       openUrlMediaType: _openUrlMediaType,
                                       text: finalText,
