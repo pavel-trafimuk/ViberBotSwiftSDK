@@ -15,7 +15,8 @@ public protocol DialogStep: Identifiable {
     
     /// keyboard which will be send with text above
     /// default value is nil
-    func getKeyboardFromBot(preferredLanguage: String,
+    func getKeyboardFromBot(participant: ViberSharedSwiftSDK.CallbackUser,
+                            preferredLanguage: String,
                             request: Request) -> UIGridViewBuilder?
     
     /// any custom logic, which you want to execute, when participant starts this step
@@ -91,7 +92,8 @@ public extension DialogStep {
 
         let keyboard: UIGridView?
         do {
-            if let builder = getKeyboardFromBot(preferredLanguage: preferredLanguage,
+            if let builder = getKeyboardFromBot(participant: participant,
+                                                preferredLanguage: preferredLanguage,
                                                 request: request) {
                 keyboard = try builder.build()
             }

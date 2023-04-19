@@ -250,9 +250,6 @@ public struct CallbackUser: Codable {
     public let language: String
     public let apiVersion: Int
     
-    // TODO: implement it by filling from the botInfo!
-    public var isAdmin: Bool = false
-    
     public enum CodingKeys: String, CodingKey {
         case id
         case name

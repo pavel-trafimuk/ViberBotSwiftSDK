@@ -66,12 +66,21 @@ public struct GetAccountInfo: Codable {
             case admin
             case participant
         }
+        public let role: Role
     }
     
     /// Members of the bot’s public chat
     /// Deprecated
     public let members: [Member]?
     
+    public func isAdmin(_ id: String) -> Bool {
+        members?.contains(where: { $0.id == id && $0.role == .admin }) ?? false
+    }
+
+    public func isParticipant(_ id: String) -> Bool {
+        members?.contains(where: { $0.id == id && $0.role == .participant }) ?? false
+    }
+
     public enum CodingKeys: String, CodingKey {
         case status
         case statusMessage = "status_message"
