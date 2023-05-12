@@ -29,3 +29,39 @@ struct CreateSubscriber: AsyncMigration {
         try await database.schema(Subscriber.schema).delete()
     }
 }
+
+
+struct CreateSavedCallbackEvent: AsyncMigration {
+    // Prepares the database for storing Galaxy models.
+    func prepare(on database: Database) async throws {
+        try await database.schema(SavedCallbackEvent.schema)
+            .field("id", .uuid)
+            .field("user_id", .string)
+            .field("event_type", .string)
+            .field("timestamp", .int64)
+            .create()
+    }
+    
+    // Optionally reverts the changes made in the prepare method.
+    func revert(on database: Database) async throws {
+        try await database.schema(SavedCallbackEvent.schema).delete()
+    }
+}
+
+
+struct CreateSavedStepbackEvent: AsyncMigration {
+    // Prepares the database for storing Galaxy models.
+    func prepare(on database: Database) async throws {
+        try await database.schema(SavedStepEvent.schema)
+            .field("id", .uuid)
+            .field("user_id", .string)
+            .field("step", .string)
+            .field("timestamp", .int64)
+            .create()
+    }
+    
+    // Optionally reverts the changes made in the prepare method.
+    func revert(on database: Database) async throws {
+        try await database.schema(SavedStepEvent.schema).delete()
+    }
+}

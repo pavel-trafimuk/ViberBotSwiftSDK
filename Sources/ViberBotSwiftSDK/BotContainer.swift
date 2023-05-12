@@ -24,7 +24,7 @@ public extension ViberBotCommonContainer {
     }
     
     mutating func setup(with config: BotConfig) throws {
-        if config.useDatabase {
+        if !config.databaseLevel.isEmpty {
             app.migrations.add(CreateSubscriber())
         }
         try app.group(.constant(config.routePath)) { builder in

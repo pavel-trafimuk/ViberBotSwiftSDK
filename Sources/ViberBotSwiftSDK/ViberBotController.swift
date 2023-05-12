@@ -44,6 +44,15 @@ public struct ViberBotController: RouteCollection {
             }
             
             do {
+                if req.viberBot.config.databaseLevel.contains(.callbackEvent),
+                let dbEvent = SavedCallbackEvent(event: event) {
+                    do {
+                        try await dbEvent.save(on: req.db)
+                    }
+                    catch {
+                        logger.error("DB saving fail: \(error)")
+                    }
+                }
                 
                 switch event {
                 case .delivered(model: let model):
@@ -73,7 +82,7 @@ public struct ViberBotController: RouteCollection {
                         logger.debug("User unsubscribed \(model)")
                     }
                     
-                    if req.viberBot.config.useDatabase {
+                    if req.viberBot.config.databaseLevel.contains(.subscriberInfo) {
                         if let existing = try await Subscriber.find(model.userId, on: req.db) {
                             existing.status = .unsubscribed
                             if req.viberBot.config.verboseLevel > 0 {
@@ -159,7 +168,7 @@ public struct ViberBotController: RouteCollection {
     private func findCreateAndUpdateSubscriber(participant: CallbackUser,
                                                newStatus: Subscriber.Status?,
                                                request: Request) async throws -> Subscriber? {
-        guard request.viberBot.config.useDatabase else {
+        guard request.viberBot.config.databaseLevel.contains(.subscriberInfo) else {
             return nil
         }
         let logger = request.logger

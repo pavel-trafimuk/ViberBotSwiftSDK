@@ -1,6 +1,18 @@
 import Foundation
 import Vapor
 
+public struct DatabaseStorageLevel: OptionSet {
+    public let rawValue: UInt
+
+    public init(rawValue: UInt) {
+        self.rawValue = rawValue
+    }
+    
+    public static let subscriberInfo = DatabaseStorageLevel(rawValue: 1 << 0)
+    public static let callbackEvent = DatabaseStorageLevel(rawValue: 1 << 1)
+    public static let selectedSteps = DatabaseStorageLevel(rawValue: 1 << 2)
+}
+
 public final class BotConfig {
     public init(apiKey: String,
                 hostAddress: String,
@@ -9,7 +21,7 @@ public final class BotConfig {
                 sendPhoto: Bool = true,
                 defaultSenderInfo: SenderInfo,
                 minApiVersion: Int = 7,
-                useDatabase: Bool = true,
+                databaseLevel: DatabaseStorageLevel = [],
                 verboseLevel: Int = 0) {
         self.apiKey = apiKey
         self.hostAddress = hostAddress
@@ -19,7 +31,7 @@ public final class BotConfig {
         self.verboseLevel = verboseLevel
         self.defaultSenderInfo = defaultSenderInfo
         self.minApiVersion = minApiVersion
-        self.useDatabase = useDatabase
+        self.databaseLevel = databaseLevel
     }
     
     let apiKey: String
@@ -30,5 +42,5 @@ public final class BotConfig {
     public var verboseLevel: Int
     public var defaultSenderInfo: SenderInfo
     public let minApiVersion: Int
-    public let useDatabase: Bool
+    public let databaseLevel: DatabaseStorageLevel
 }

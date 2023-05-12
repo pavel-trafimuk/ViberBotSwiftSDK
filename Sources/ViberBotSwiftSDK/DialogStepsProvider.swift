@@ -33,6 +33,8 @@ extension DialogStepsProvider {
                                             request: request) {
             request.logger.debug("Found that user strictly selected: \(step.id)")
             
+            saveStepEvent(step: step.id, request: request, userId: model.sender.id, timestamp: model.timestamp)
+            
             step.executeStepStarting(model: model,
                                      previousTrackingData: trackingData,
                                      foundSubscriber: foundSubscriber,
@@ -44,6 +46,9 @@ extension DialogStepsProvider {
         if let trackingData,
            let step = allSteps.first(where: { $0.id == trackingData.activeStep }) {
             request.logger.debug("Found that user answered on \(step.id)")
+            
+            saveStepEvent(step: step.id, request: request, userId: model.sender.id, timestamp: model.timestamp)
+            
             // it's a response from user
             let replier = QuickReplier(participant: model.sender,
                                        foundSubscriber: foundSubscriber,
@@ -66,6 +71,24 @@ extension DialogStepsProvider {
                                      request: request)
         }
         
+    }
+    
+    func saveStepEvent(step: String,
+                       request: Request,
+                       userId: String,
+                       timestamp: Int) {
+        guard request.viberBot.config.databaseLevel.contains(.selectedSteps) else { return }
+        Task {
+            do {
+                let dbEvent = SavedStepEvent(userId: userId,
+                                             step: step,
+                                             timestamp: timestamp)
+                try await dbEvent.save(on: request.db)
+            }
+            catch {
+                request.logger.error("DB saving fail: \(error)")
+            }
+        }
     }
 }
 

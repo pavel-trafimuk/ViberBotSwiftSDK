@@ -27,6 +27,17 @@ public enum CallbackEvent: Decodable {
         case event
     }
     
+    public var isImportantForDB: Bool {
+        switch self {
+        case .delivered, .seen: return false
+        case .failed: return true
+        case .subscribed, .unsubscribed: return true
+        case .conversationStarted: return true
+        case .message: return true
+        case .clientStatus, .action, .webhook: return false
+        }
+    }
+    
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         let event = try container.decode(CallbackEventType.self, forKey: .event)
