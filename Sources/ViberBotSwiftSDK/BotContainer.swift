@@ -26,6 +26,8 @@ public extension ViberBotCommonContainer {
     mutating func setup(with config: BotConfig) throws {
         if !config.databaseLevel.isEmpty {
             app.migrations.add(CreateSubscriber())
+            app.migrations.add(CreateSavedCallbackEvent())
+            app.migrations.add(CreateSavedStepbackEvent())
         }
         try app.group(.constant(config.routePath)) { builder in
             try builder.register(collection: ViberBotController())
