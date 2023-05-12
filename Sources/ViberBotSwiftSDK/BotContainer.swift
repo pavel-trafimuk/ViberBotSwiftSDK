@@ -37,6 +37,11 @@ public extension ViberBotCommonContainer {
     
     func launch() async  {
         do {
+            
+            if !config.databaseLevel.isEmpty {
+                try await app.autoMigrate()
+            }
+            
             let currentInfo = try await self.info.getActualInfo()
             let webhook = webhook
             if currentInfo.webhook != webhook.fullUrl {
