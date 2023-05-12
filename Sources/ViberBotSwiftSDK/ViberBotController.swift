@@ -88,7 +88,12 @@ public struct ViberBotController: RouteCollection {
                             if req.viberBot.config.verboseLevel > 0 {
                                 logger.debug("Already found \(existing.name)")
                             }
-                            try await existing.save(on: req.db)
+                            do {
+                                try await existing.save(on: req.db)
+                            }
+                            catch {
+                                logger.error("Failed with saving to DB: \(error)")
+                            }
                         }
                         else {
                             if req.viberBot.config.verboseLevel > 0 {
@@ -188,7 +193,12 @@ public struct ViberBotController: RouteCollection {
         }
         subscriber.update(with: participant)
         subscriber.status = newStatus
-        try await subscriber.save(on: request.db)
+        do {
+            try await subscriber.save(on: request.db)
+        }
+        catch {
+            logger.error("A new one for \(participant)")
+        }
         return subscriber
     }
 }
