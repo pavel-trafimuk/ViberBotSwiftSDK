@@ -189,7 +189,7 @@ public struct ViberBotController: RouteCollection {
         else {
             subscriber = Subscriber()
             if request.viberBot.config.verboseLevel > 0 {
-                logger.debug("A new one for \(participant)")
+                logger.debug("Created new one for \(participant)")
             }
         }
         subscriber.update(with: participant)
@@ -198,7 +198,7 @@ public struct ViberBotController: RouteCollection {
             try await subscriber.save(on: request.db)
         }
         catch {
-            logger.error("A new one for \(participant)")
+            logger.error("Failed with saving \(participant), error: \(error)")
         }
         return subscriber
     }
