@@ -44,16 +44,20 @@ public struct ViberBotController: RouteCollection {
             }
             
             do {
+                logger.debug("12 check for event")
                 if req.viberBot.config.databaseLevel.contains(.callbackEvent),
                 let dbEvent = SavedCallbackEvent(event: event) {
+                    logger.debug("121 event created, trying to save")
                     do {
                         try await dbEvent.save(on: req.db)
+                        logger.debug("122 event saved")
                     }
                     catch {
                         logger.error("DB saving fail: \(error)")
                     }
                 }
-                
+                logger.debug("123 event finished")
+
                 switch event {
                 case .delivered(model: let model):
                     if req.viberBot.config.verboseLevel > 0 {
@@ -83,7 +87,7 @@ public struct ViberBotController: RouteCollection {
                     }
                     
                     if req.viberBot.config.databaseLevel.contains(.subscriberInfo) {
-                        if let existing = try await Subscriber.find(model.userId, on: req.db) {
+                        if let existing = try await Subscriber.fi {
                             existing.status = .unsubscribed
                             if req.viberBot.config.verboseLevel > 0 {
                                 logger.debug("Already found \(existing.name)")
