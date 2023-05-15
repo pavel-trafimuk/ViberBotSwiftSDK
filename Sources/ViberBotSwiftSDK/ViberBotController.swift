@@ -87,7 +87,7 @@ public struct ViberBotController: RouteCollection {
                     }
                     
                     if req.viberBot.config.databaseLevel.contains(.subscriberInfo) {
-                        if let existing = try await Subscriber.fi {
+                        if let existing = try await Subscriber.find(model.userId, on: req.db) {
                             existing.status = .unsubscribed
                             if req.viberBot.config.verboseLevel > 0 {
                                 logger.debug("Already found \(existing.name)")
