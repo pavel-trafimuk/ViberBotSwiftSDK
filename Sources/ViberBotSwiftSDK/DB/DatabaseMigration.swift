@@ -35,7 +35,7 @@ struct CreateSavedCallbackEvent: AsyncMigration {
     // Prepares the database for storing Galaxy models.
     func prepare(on database: Database) async throws {
         try await database.schema(SavedCallbackEvent.schema)
-            .field("id", .uuid)
+            .id()
             .field("user_id", .string)
             .field("event_type", .string)
             .field("timestamp", .int64)
@@ -53,7 +53,7 @@ struct CreateSavedStepbackEvent: AsyncMigration {
     // Prepares the database for storing Galaxy models.
     func prepare(on database: Database) async throws {
         try await database.schema(SavedStepEvent.schema)
-            .field("id", .uuid)
+            .id()
             .field("user_id", .string)
             .field("step", .string)
             .field("timestamp", .int64)
