@@ -44,7 +44,7 @@ public struct ViberBotController: RouteCollection {
             }
             
             do {
-                logger.debug("12 check for event")
+                logger.debug("12 check for event: \(req.viberBot.config.databaseLevel.rawValue)")
                 if req.viberBot.config.databaseLevel.contains(.callbackEvent),
                 let dbEvent = SavedCallbackEvent(event: event) {
                     logger.debug("121 event created, trying to save")
