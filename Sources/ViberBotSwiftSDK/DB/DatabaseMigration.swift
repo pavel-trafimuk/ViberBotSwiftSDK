@@ -5,7 +5,7 @@ struct CreateSubscriber: AsyncMigration {
     // Prepares the database for storing Galaxy models.
     func prepare(on database: Database) async throws {
         try await database.schema(Subscriber.schema)
-            .field("user_id", .string)
+            .field("user_id", .string, .identifier(auto: false))
             .field("name", .string)
             .field("avatar", .string)
             .field("status", .string)
