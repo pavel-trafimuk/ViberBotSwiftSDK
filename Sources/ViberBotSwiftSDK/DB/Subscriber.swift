@@ -14,54 +14,54 @@ public final class Subscriber: Model {
     @Field(key: "name")
     public var name: String
 
-    @OptionalField(key: "avatar")
-    public var avatar: String?
-
+//    @OptionalField(key: "avatar")
+//    public var avatar: String?
+//
     /// String representable, Codable enum for animal types.
     public enum Status: String, Codable {
         case subscribed
         case unsubscribed
     }
-
-    @OptionalEnum(key: "status")
-    public var status: Status?
-    
-    @OptionalField(key: "last_context")
-    public var lastContext: String?
-
-    @OptionalField(key: "country")
-    public var country: String?
-
-    @OptionalField(key: "language")
-    public var language: String?
-
-    @OptionalField(key: "api_version")
-    public var apiVersion: Int?
-
-    @OptionalField(key: "primary_device_os")
-    public var primaryDeviceOS: String?
-
-    @OptionalField(key: "viber_version")
-    public var viberVersion: String?
-
-    @OptionalField(key: "device_type")
-    public var deviceType: String?
-
-    @OptionalField(key: "mcc")
-    public var mcc: Int?
-
-    @OptionalField(key: "mnc")
-    public var mnc: Int?
-
-    /// to map user with some external services
-    @OptionalField(key: "external_id")
-    public var externalId: String?
-
-    @OptionalField(key: "external_status")
-    public var externalStatus: String?
-
-    @OptionalField(key: "external_value")
-    public var externalValue: Data?
+//
+//    @OptionalEnum(key: "status")
+//    public var status: Status?
+//
+//    @OptionalField(key: "last_context")
+//    public var lastContext: String?
+//
+//    @OptionalField(key: "country")
+//    public var country: String?
+//
+//    @OptionalField(key: "language")
+//    public var language: String?
+//
+//    @OptionalField(key: "api_version")
+//    public var apiVersion: Int?
+//
+//    @OptionalField(key: "primary_device_os")
+//    public var primaryDeviceOS: String?
+//
+//    @OptionalField(key: "viber_version")
+//    public var viberVersion: String?
+//
+//    @OptionalField(key: "device_type")
+//    public var deviceType: String?
+//
+//    @OptionalField(key: "mcc")
+//    public var mcc: Int?
+//
+//    @OptionalField(key: "mnc")
+//    public var mnc: Int?
+//
+//    /// to map user with some external services
+//    @OptionalField(key: "external_id")
+//    public var externalId: String?
+//
+//    @OptionalField(key: "external_status")
+//    public var externalStatus: String?
+//
+//    @OptionalField(key: "external_value")
+//    public var externalValue: Data?
 
     /// Creates a new, empty Subscriber.
     public init() { }
@@ -72,7 +72,7 @@ public final class Subscriber: Model {
                 avatar: String?) {
         self.id = id
         self.name = name
-        self.avatar = avatar
+//        self.avatar = avatar
     }
 }
 
@@ -85,9 +85,9 @@ extension Subscriber {
     public func update(with user: CallbackUser) {
         id = user.id
         name = user.name ?? ""
-        avatar = user.avatar
-        country = user.country
-        language = user.language
-        apiVersion = user.apiVersion
+//        avatar = user.avatar
+//        country = user.country
+//        language = user.language
+//        apiVersion = user.apiVersion
     }
 }
