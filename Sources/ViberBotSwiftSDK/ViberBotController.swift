@@ -44,22 +44,16 @@ public struct ViberBotController: RouteCollection {
             }
             
             do {
-                logger.debug("12 check for event: \(req.viberBot.config.databaseLevel.rawValue)")
-                logger.debug("Event: \(event)")
-                let dbEvent = SavedCallbackEvent(event: event)
-                logger.debug("dbEvent: \(dbEvent)")
-                if let dbEvent = SavedCallbackEvent(event: event) {
-                    logger.debug("121 event created, trying to save")
+                if event.isImportantForDB,
+                   let dbEvent = SavedCallbackEvent(event: event) {
                     do {
                         try await dbEvent.save(on: req.db)
-                        logger.debug("122 event saved")
                     }
                     catch {
                         logger.error("DB saving fail: \(error)")
                     }
                 }
-                logger.debug("123 event finished")
-
+                
                 switch event {
                 case .delivered(model: let model):
                     if req.viberBot.config.verboseLevel > 0 {

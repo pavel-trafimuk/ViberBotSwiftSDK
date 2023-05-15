@@ -7,7 +7,7 @@ public final class Subscriber: Model {
     public static let schema = "subscribers"
 
     /// Unique identifier for the subscriber.
-    @ID(custom: "user_id")
+    @ID(custom: "user_id", generatedBy: .user)
     public var id: String?
 
     /// The Subscriber's name.
