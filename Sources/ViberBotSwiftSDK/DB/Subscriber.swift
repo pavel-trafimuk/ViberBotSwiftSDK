@@ -87,7 +87,7 @@ extension Subscriber {
         name = user.name ?? ""
         avatar = user.avatar
         country = user.country
-//        language = user.language
+        language = user.language
 //        apiVersion = user.apiVersion
     }
 }
