@@ -74,7 +74,7 @@ public struct ViberBotController: RouteCollection {
                     }
                     
                     try await self.findCreateAndUpdateSubscriber(participant: model.user,
-                                                                 newStatus: .subscribed,
+                                                                 isSubscribed: true,
                                                                  request: req)
                     
                 case .unsubscribed(model: let model):
@@ -84,7 +84,7 @@ public struct ViberBotController: RouteCollection {
                     
                     if req.viberBot.config.databaseLevel.contains(.subscriberInfo) {
                         if let existing = try await Subscriber.find(model.userId, on: req.db) {
-//                            existing.status = .unsubscribed
+                            existing.isSubscribed = false
                             if req.viberBot.config.verboseLevel > 0 {
                                 logger.debug("Already found \(existing.name)")
                             }
@@ -109,7 +109,7 @@ public struct ViberBotController: RouteCollection {
                     }
                     
                     let subscriber = try await self.findCreateAndUpdateSubscriber(participant: model.user,
-                                                                                  newStatus: .subscribed,
+                                                                                  isSubscribed: true,
                                                                                   request: req)
                     
                     if let result = req.viberBot.handling.onConversationStarted?(req, model, subscriber) {
@@ -137,7 +137,7 @@ public struct ViberBotController: RouteCollection {
                     }
                     
                     let subscriber = try await self.findCreateAndUpdateSubscriber(participant: model.sender,
-                                                                                  newStatus: .subscribed,
+                                                                                  isSubscribed: true,
                                                                                   request: req)
                     
                     _ = req.application.eventLoopGroup.next().makeFutureWithTask {
@@ -172,7 +172,7 @@ public struct ViberBotController: RouteCollection {
     
     @discardableResult
     private func findCreateAndUpdateSubscriber(participant: CallbackUser,
-                                               newStatus: Subscriber.Status?,
+                                               isSubscribed: Bool,
                                                request: Request) async throws -> Subscriber? {
         guard request.viberBot.config.databaseLevel.contains(.subscriberInfo) else {
             return nil
@@ -193,7 +193,7 @@ public struct ViberBotController: RouteCollection {
             }
         }
         subscriber.update(with: participant)
-//        subscriber.status = newStatus
+        subscriber.isSubscribed = isSubscribed
         do {
             try await subscriber.save(on: request.db)
         }

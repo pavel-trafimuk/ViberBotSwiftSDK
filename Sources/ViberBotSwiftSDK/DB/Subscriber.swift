@@ -17,14 +17,8 @@ public final class Subscriber: Model {
     @OptionalField(key: "avatar")
     public var avatar: String?
 
-    /// String representable, Codable enum for animal types.
-    public enum Status: String, Codable {
-        case subscribed
-        case unsubscribed
-    }
-
-    @OptionalEnum(key: "status")
-    public var status: Status?
+    @Field(key: "is_subscribed")
+    public var isSubscribed: Bool
 
     @OptionalField(key: "last_context")
     public var lastContext: String?
