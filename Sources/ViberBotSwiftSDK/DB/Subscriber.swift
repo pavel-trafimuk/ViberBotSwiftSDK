@@ -54,8 +54,8 @@ public final class Subscriber: Model {
     @OptionalField(key: "external_status")
     public var externalStatus: String?
 
-//    @OptionalField(key: "external_value")
-//    public var externalValue: Data?
+    @OptionalField(key: "external_value")
+    public var externalValue: Data?
 
     /// Creates a new, empty Subscriber.
     public init() { }

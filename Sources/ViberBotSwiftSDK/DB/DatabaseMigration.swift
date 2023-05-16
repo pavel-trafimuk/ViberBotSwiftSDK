@@ -20,7 +20,7 @@ struct CreateSubscriber: AsyncMigration {
             .field("mnc", .int)
             .field("external_id", .string)
             .field("external_status", .string)
-//            .field("external_value", .data)
+            .field("external_value", .data)
             .create()
     }
     
