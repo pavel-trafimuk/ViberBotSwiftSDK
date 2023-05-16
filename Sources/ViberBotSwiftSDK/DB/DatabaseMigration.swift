@@ -8,7 +8,7 @@ struct CreateSubscriber: AsyncMigration {
             .field("user_id", .string, .identifier(auto: false))
             .field("name", .string)
             .field("avatar", .string)
-//            .field("status", .string)
+            .field("status", .string)
             .field("last_context", .string)
             .field("country", .string)
             .field("language", .string)
