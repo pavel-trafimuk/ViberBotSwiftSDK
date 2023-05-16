@@ -22,10 +22,10 @@ public final class Subscriber: Model {
         case subscribed
         case unsubscribed
     }
-//
-//    @OptionalEnum(key: "status")
-//    public var status: Status?
-//
+
+    @OptionalEnum(key: "status")
+    public var status: Status?
+
     @OptionalField(key: "last_context")
     public var lastContext: String?
 
@@ -86,8 +86,8 @@ extension Subscriber {
         id = user.id
         name = user.name ?? ""
         avatar = user.avatar
-//        country = user.country
-//        language = user.language
-//        apiVersion = user.apiVersion
+        country = user.country
+        language = user.language
+        apiVersion = user.apiVersion
     }
 }
