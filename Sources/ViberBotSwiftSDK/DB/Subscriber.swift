@@ -23,8 +23,8 @@ public final class Subscriber: Model {
         case unsubscribed
     }
 
-    @OptionalEnum(key: "status")
-    public var status: Status?
+//    @OptionalEnum(key: "status")
+//    public var status: Status?
 
     @OptionalField(key: "last_context")
     public var lastContext: String?
