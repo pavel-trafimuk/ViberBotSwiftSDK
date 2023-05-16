@@ -47,19 +47,19 @@ public final class Subscriber: Model {
     @OptionalField(key: "device_type")
     public var deviceType: String?
 
-//    @OptionalField(key: "mcc")
-//    public var mcc: Int?
-//
-//    @OptionalField(key: "mnc")
-//    public var mnc: Int?
+    @OptionalField(key: "mcc")
+    public var mcc: Int?
+
+    @OptionalField(key: "mnc")
+    public var mnc: Int?
 
     // to map user with some external services
     @OptionalField(key: "external_id")
     public var externalId: String?
 
-//    @OptionalField(key: "external_status")
-//    public var externalStatus: String?
-//
+    @OptionalField(key: "external_status")
+    public var externalStatus: String?
+
 //    @OptionalField(key: "external_value")
 //    public var externalValue: Data?
 
