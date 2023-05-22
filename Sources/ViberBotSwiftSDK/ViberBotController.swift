@@ -90,7 +90,6 @@ public struct ViberBotController: RouteCollection {
                             }
                             do {
                                 try await existing.save(on: req.db)
-                                logger.debug("SAVING FINISHED")
                             }
                             catch {
                                 logger.error("Failed with saving to DB: \(error)")
