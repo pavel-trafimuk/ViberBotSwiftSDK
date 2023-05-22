@@ -29,7 +29,7 @@ public enum CallbackEvent: Decodable {
     
     public var isImportantForDB: Bool {
         switch self {
-        case .delivered, .seen: return false
+        case .delivered, .seen: return true
         case .failed: return true
         case .subscribed, .unsubscribed: return true
         case .conversationStarted: return true
