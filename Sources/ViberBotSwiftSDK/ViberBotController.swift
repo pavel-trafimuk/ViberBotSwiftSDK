@@ -50,7 +50,9 @@ public struct ViberBotController: RouteCollection {
             }
             
             do {
-                if event.isImportantForDB,
+                if
+                    req.viberBot.config.databaseLevel.contains(.callbackEvent),
+                    event.isImportantForDB,
                    let dbEvent = SavedCallbackEvent(event: event) {
                     do {
                         try await dbEvent.save(on: req.db)
@@ -95,10 +97,12 @@ public struct ViberBotController: RouteCollection {
                                 logger.debug("Already found \(existing.name)")
                             }
                             do {
+                                
                                 try await existing.save(on: req.db)
                             }
                             catch {
                                 logger.error("Failed with saving to DB: \(error)")
+                                logger.error("Problem with changing isSubscribed state")
                             }
                         }
                         else {
