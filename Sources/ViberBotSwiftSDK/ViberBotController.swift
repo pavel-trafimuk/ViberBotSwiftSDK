@@ -27,6 +27,12 @@ public struct ViberBotController: RouteCollection {
 
             guard req.isValidViberCallback() else {
                 logger.error("Request not from Viber")
+                if let event = try? req.content.decode(CallbackEvent.self) {
+                    logger.error("Event: \(event)")
+                }
+                else {
+                    logger.error("Can't be parsed")
+                }
                 return CallbackResponse.empty()
             }
             if req.viberBot.config.verboseLevel > 0 {

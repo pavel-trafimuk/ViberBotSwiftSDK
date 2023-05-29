@@ -84,7 +84,6 @@ extension DialogStepsProvider {
                                              step: step,
                                              timestamp: timestamp)
                 try await dbEvent.save(on: request.db)
-                request.logger.debug("SAVING FINISHED")
             }
             catch {
                 request.logger.error("DB saving fail: \(error)")

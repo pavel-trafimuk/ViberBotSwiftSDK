@@ -24,6 +24,7 @@ public extension ViberBotCommonContainer {
     }
     
     mutating func setup(with config: BotConfig) throws {
+        app.logger.debug("Setup of app")
         if !config.databaseLevel.isEmpty {
             app.migrations.add(CreateSubscriber())
             app.migrations.add(CreateSavedCallbackEvent())
@@ -33,9 +34,11 @@ public extension ViberBotCommonContainer {
             try builder.register(collection: ViberBotController())
         }
         self.config = config
+        app.logger.debug("Setup of app finished")
     }
     
     func launch() async  {
+        app.logger.debug("Launching of app")
         do {
             
             if !config.databaseLevel.isEmpty {
@@ -54,6 +57,7 @@ public extension ViberBotCommonContainer {
         catch {
             app.logger.error("Error: \(error)")
         }
+        app.logger.debug("Launching of app was finished")
     }
     
     var webhook: WebhookUpdater {
