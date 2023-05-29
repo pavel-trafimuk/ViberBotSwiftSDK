@@ -7,16 +7,16 @@ public enum Constants {
     /// in the Viber API and to prevent unauthorized persons from
     /// sending requests on behalf of a bot. Each API request must
     /// include an HTTP Header called X-Viber-Auth-Token containing the account’s authentication token.
-    static let authHeaderKey = "X-Viber-Auth-Token"
+    public static let authHeaderKey = "X-Viber-Auth-Token"
     
     /// Each callback will contain a signature on the JSON passed to the callback.
     /// The signature is HMAC with SHA256 that will use the authentication
     /// token as the key and the JSON as the value.
     /// The result will be passed as HTTP Header X-Viber-Content-Signature
     /// so the receiver can determine the origin of the message.
-    static let signatureHeaderKey = "X-Viber-Content-Signature"
+    public static let signatureHeaderKey = "X-Viber-Content-Signature"
     
-    static let callBacksPath = "bot_callbacks"
+    public static let callBacksPath = "bot_callbacks"
     
     // TODO: implement it everywhere
     /// you can use it in any text, it will be replaced on real participant name before sending
