@@ -9,6 +9,7 @@ struct CreateSubscriber: AsyncMigration {
             .field("name", .string)
             .field("avatar", .string)
             .field("is_subscribed", .bool, .required)
+            .field("join_time", .int64)
             .field("last_context", .string)
             .field("country", .string)
             .field("language", .string)

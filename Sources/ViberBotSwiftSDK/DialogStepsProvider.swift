@@ -33,7 +33,10 @@ extension DialogStepsProvider {
                                             request: request) {
             request.logger.debug("Found that user strictly selected: \(step.id)")
             
-            saveStepEvent(step: step.id, request: request, userId: model.sender.id, timestamp: model.timestamp)
+            saveStepEvent(step: step.id,
+                          request: request,
+                          userId: model.sender.id,
+                          timestamp: model.timestamp)
             
             step.executeStepStarting(model: model,
                                      previousTrackingData: trackingData,

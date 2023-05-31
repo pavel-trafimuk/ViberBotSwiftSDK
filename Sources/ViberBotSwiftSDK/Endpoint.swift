@@ -19,12 +19,16 @@ public enum Endpoint: String {
     public var uri: URI {
         .init(stringLiteral: urlPath)
     }
+    
+    public var url: URL {
+        URL(string: urlPath)!
+    }
 }
 
 extension URI {
-    static let setWebhook: URI = Endpoint.setWebhook.uri
-    static let sendMessage: URI = Endpoint.sendMessage.uri
-    static let broadcastMessage: URI = Endpoint.broadcastMessage.uri
-    static let getOnline: URI = Endpoint.getOnline.uri
-    static let getAccountInfo: URI = Endpoint.getAccountInfo.uri
+    public static let setWebhook: URI = Endpoint.setWebhook.uri
+    public static let sendMessage: URI = Endpoint.sendMessage.uri
+    public static let broadcastMessage: URI = Endpoint.broadcastMessage.uri
+    public static let getOnline: URI = Endpoint.getOnline.uri
+    public static let getAccountInfo: URI = Endpoint.getAccountInfo.uri
 }

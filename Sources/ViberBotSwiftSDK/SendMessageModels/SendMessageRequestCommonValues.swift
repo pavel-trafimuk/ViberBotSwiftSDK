@@ -22,7 +22,7 @@ public protocol SendMessageRequestCommonValues: Content {
 }
 
 extension SendMessageRequestCommonValues {
-    var trackingData: TrackingData? {
+    public var trackingData: TrackingData? {
         guard let string = rawTrackingData,
               !string.isEmpty,
               let data = string.data(using: .utf8)

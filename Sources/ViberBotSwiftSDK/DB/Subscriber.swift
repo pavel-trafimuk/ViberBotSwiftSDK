@@ -23,6 +23,9 @@ public final class Subscriber: Model {
     @OptionalField(key: "last_context")
     public var lastContext: String?
 
+    @OptionalField(key: "join_time")
+    public var joinTime: Int?
+
     @OptionalField(key: "country")
     public var country: String?
 

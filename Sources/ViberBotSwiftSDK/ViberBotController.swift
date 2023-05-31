@@ -54,11 +54,13 @@ public struct ViberBotController: RouteCollection {
                     req.viberBot.config.databaseLevel.contains(.callbackEvent),
                     event.isImportantForDB,
                    let dbEvent = SavedCallbackEvent(event: event) {
-                    do {
-                        try await dbEvent.save(on: req.db)
-                    }
-                    catch {
-                        logger.error("DB saving fail: \(error)")
+                    Task {
+                        do {
+                            try await dbEvent.save(on: req.db)
+                        }
+                        catch {
+                            logger.error("DB saving fail: \(error)")
+                        }
                     }
                 }
                 
@@ -96,13 +98,15 @@ public struct ViberBotController: RouteCollection {
                             if req.viberBot.config.verboseLevel > 0 {
                                 logger.debug("Already found \(existing.name)")
                             }
-                            do {
-                                
-                                try await existing.save(on: req.db)
-                            }
-                            catch {
-                                logger.error("Failed with saving to DB: \(error)")
-                                logger.error("Problem with changing isSubscribed state")
+                            Task {
+                                do {
+                                    
+                                    try await existing.save(on: req.db)
+                                }
+                                catch {
+                                    logger.error("Failed with saving to DB: \(error)")
+                                    logger.error("Problem with changing isSubscribed state")
+                                }
                             }
                         }
                         else {
@@ -203,11 +207,16 @@ public struct ViberBotController: RouteCollection {
         }
         subscriber.update(with: participant)
         subscriber.isSubscribed = isSubscribed
-        do {
-            try await subscriber.save(on: request.db)
+        if isSubscribed {
+            subscriber.joinTime = Int(Date().timeIntervalSince1970)
         }
-        catch {
-            logger.error("Failed with saving \(participant), error: \(error)")
+        Task {
+            do {
+                try await subscriber.save(on: request.db)
+            }
+            catch {
+                logger.error("Failed with saving \(participant), error: \(error)")
+            }
         }
         return subscriber
     }
