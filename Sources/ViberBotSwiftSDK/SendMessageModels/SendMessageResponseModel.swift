@@ -18,6 +18,12 @@ public struct SendMessageResponseModel: Codable {
         public let status: ResponseStatus
         
         public let statusMessage: String?
+        
+        public enum CodingKeys: String, CodingKey {
+            case receiver
+            case status
+            case statusMessage = "status_message"
+        }
     }
     
     public let failedList: [FailedListItem]?
