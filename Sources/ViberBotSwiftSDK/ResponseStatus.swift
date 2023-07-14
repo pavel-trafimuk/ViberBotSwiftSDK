@@ -81,7 +81,6 @@ public enum ResponseStatus: Int, Codable, Error {
         else {
             resultValue = 1000
         }
-        // TODO: fix it
-        self.init(rawValue: resultValue)!
+        self = Self(rawValue: resultValue) ?? .general
     }
 }
