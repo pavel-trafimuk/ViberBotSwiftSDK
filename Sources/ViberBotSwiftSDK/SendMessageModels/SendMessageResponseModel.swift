@@ -12,6 +12,16 @@ public struct SendMessageResponseModel: Codable {
     
     public let billingStatus: BillingStatus?
     
+    public struct FailedListItem: Codable {
+        public let receiver: String
+        
+        public let status: ResponseStatus
+        
+        public let statusMessage: String?
+    }
+    
+    public let failedList: [FailedListItem]?
+    
     public enum BillingStatus: Int, Codable {
         /// Default for all cases other than the ones listed below: chat extension, reply to open conversation, etc.
         case free = 0
@@ -37,5 +47,6 @@ public struct SendMessageResponseModel: Codable {
         case statusMessage = "status_message"
         case messageToken = "message_token"
         case billingStatus = "billing_status"
+        case failedList = "failed_list"
     }
 }
