@@ -17,6 +17,7 @@ public final class BotConfig {
     public init(apiKey: String,
                 hostAddress: String,
                 routePath: String = "viber_bot",
+                botId: String,
                 sendName: Bool = true,
                 sendPhoto: Bool = true,
                 defaultSenderInfo: SenderInfo,
@@ -32,9 +33,11 @@ public final class BotConfig {
         self.defaultSenderInfo = defaultSenderInfo
         self.minApiVersion = minApiVersion
         self.databaseLevel = databaseLevel
+        self.botId = botId
     }
     
     let apiKey: String
+    public let botId: String
     public let hostAddress: String
     public let routePath: String
     let sendName: Bool

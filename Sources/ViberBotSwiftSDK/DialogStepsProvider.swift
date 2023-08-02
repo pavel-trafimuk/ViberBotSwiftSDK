@@ -85,7 +85,8 @@ extension DialogStepsProvider {
             do {
                 let dbEvent = SavedStepEvent(userId: userId,
                                              step: step,
-                                             timestamp: timestamp)
+                                             timestamp: timestamp,
+                                             botId: request.viberBot.config.botId)
                 try await dbEvent.save(on: request.db)
             }
             catch {

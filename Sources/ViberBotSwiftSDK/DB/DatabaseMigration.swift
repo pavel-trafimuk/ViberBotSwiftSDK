@@ -10,6 +10,7 @@ struct CreateSubscriber: AsyncMigration {
             .field("avatar", .string)
             .field("is_subscribed", .bool, .required)
             .field("join_time", .int64)
+            .field("unjoin_time", .int64)
             .field("last_context", .string)
             .field("country", .string)
             .field("language", .string)
@@ -21,6 +22,7 @@ struct CreateSubscriber: AsyncMigration {
             .field("mnc", .int)
             .field("external_id", .string)
             .field("external_status", .string)
+            .field("bot_id", .string)
 //            .field("external_value", .data)
             .create()
     }
@@ -40,6 +42,7 @@ struct CreateSavedCallbackEvent: AsyncMigration {
             .field("user_id", .string)
             .field("event_type", .string)
             .field("timestamp", .int64)
+            .field("bot_id", .string)
             .create()
     }
     
@@ -58,6 +61,7 @@ struct CreateSavedStepbackEvent: AsyncMigration {
             .field("user_id", .string)
             .field("step", .string)
             .field("timestamp", .int64)
+            .field("bot_id", .string)
             .create()
     }
     

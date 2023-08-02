@@ -53,7 +53,7 @@ public struct ViberBotController: RouteCollection {
                 if
                     req.viberBot.config.databaseLevel.contains(.callbackEvent),
                     event.isImportantForDB,
-                   let dbEvent = SavedCallbackEvent(event: event) {
+                    let dbEvent = SavedCallbackEvent(event: event, botId: req.viberBot.config.botId) {
                     Task {
                         do {
                             try await dbEvent.save(on: req.db)
@@ -83,7 +83,8 @@ public struct ViberBotController: RouteCollection {
                         logger.debug("User subscribed \(model)")
                     }
                     
-                    try await self.findCreateAndUpdateSubscriber(participant: model.user,
+                    try await self.findCreateAndUpdateSubscriber(participandId: model.user.id,
+                                                                 participant: model.user,
                                                                  isSubscribed: true,
                                                                  request: req)
                     
@@ -91,37 +92,19 @@ public struct ViberBotController: RouteCollection {
                     if req.viberBot.config.verboseLevel > 0 {
                         logger.debug("User unsubscribed \(model)")
                     }
-                    
-                    if req.viberBot.config.databaseLevel.contains(.subscriberInfo) {
-                        if let existing = try await Subscriber.find(model.userId, on: req.db) {
-                            existing.isSubscribed = false
-                            if req.viberBot.config.verboseLevel > 0 {
-                                logger.debug("Already found \(existing.name)")
-                            }
-                            Task {
-                                do {
-                                    
-                                    try await existing.save(on: req.db)
-                                }
-                                catch {
-                                    logger.error("Failed with saving to DB: \(error)")
-                                    logger.error("Problem with changing isSubscribed state")
-                                }
-                            }
-                        }
-                        else {
-                            if req.viberBot.config.verboseLevel > 0 {
-                                logger.debug("Unsubscribed user \(model.userId) is not found")
-                            }
-                        }
-                    }
+
+                    try await self.findCreateAndUpdateSubscriber(participandId: model.userId,
+                                                                 participant: nil,
+                                                                 isSubscribed: false,
+                                                                 request: req)
                     
                 case .conversationStarted(model: let model):
                     if req.viberBot.config.verboseLevel > 0 {
                         logger.debug("Conversation started \(model)")
                     }
                     
-                    let subscriber = try await self.findCreateAndUpdateSubscriber(participant: model.user,
+                    let subscriber = try await self.findCreateAndUpdateSubscriber(participandId: model.user.id,
+                                                                                  participant: model.user,
                                                                                   isSubscribed: true,
                                                                                   request: req)
                     
@@ -149,7 +132,8 @@ public struct ViberBotController: RouteCollection {
                         logger.debug("Received msg: \(model.message.text ?? "<no text>") from \(model.sender.name ?? model.sender.id)")
                     }
                     
-                    let subscriber = try await self.findCreateAndUpdateSubscriber(participant: model.sender,
+                    let subscriber = try await self.findCreateAndUpdateSubscriber(participandId: model.sender.id,
+                                                                                  participant: model.sender,
                                                                                   isSubscribed: true,
                                                                                   request: req)
                     
@@ -184,7 +168,8 @@ public struct ViberBotController: RouteCollection {
     }
     
     @discardableResult
-    private func findCreateAndUpdateSubscriber(participant: CallbackUser,
+    private func findCreateAndUpdateSubscriber(participandId: String,
+                                               participant: CallbackUser?,
                                                isSubscribed: Bool,
                                                request: Request) async throws -> Subscriber? {
         guard request.viberBot.config.databaseLevel.contains(.subscriberInfo) else {
@@ -193,7 +178,7 @@ public struct ViberBotController: RouteCollection {
         let logger = request.logger
         
         let subscriber: Subscriber
-        if let existing = try await Subscriber.find(participant.id, on: request.db) {
+        if let existing = try await Subscriber.find(participant?.id ?? participandId, on: request.db) {
             subscriber = existing
             if request.viberBot.config.verboseLevel > 0 {
                 logger.debug("Already found \(existing.name)")
@@ -205,10 +190,16 @@ public struct ViberBotController: RouteCollection {
                 logger.debug("Created new one for \(participant)")
             }
         }
-        subscriber.update(with: participant)
+        if let participant {
+            subscriber.update(with: participant)
+        }
+        subscriber.botId = request.viberBot.config.botId
         subscriber.isSubscribed = isSubscribed
-        if isSubscribed {
+        if isSubscribed, subscriber.joinTime == nil {
             subscriber.joinTime = Int(Date().timeIntervalSince1970)
+        }
+        else if !isSubscribed {
+            subscriber.unJoinTime = Int(Date().timeIntervalSince1970)
         }
         Task {
             do {

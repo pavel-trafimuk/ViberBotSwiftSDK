@@ -26,6 +26,9 @@ public final class Subscriber: Model {
     @OptionalField(key: "join_time")
     public var joinTime: Int?
 
+    @OptionalField(key: "unjoin_time")
+    public var unJoinTime: Int?
+
     @OptionalField(key: "country")
     public var country: String?
 
@@ -57,6 +60,9 @@ public final class Subscriber: Model {
     @OptionalField(key: "external_status")
     public var externalStatus: String?
 
+    @Field(key: "bot_id")
+    public var botId: String?
+
 //    @OptionalField(key: "external_value")
 //    public var externalValue: Data?
 
@@ -66,16 +72,19 @@ public final class Subscriber: Model {
     /// Creates a new Subscriber with all properties set.
     public init(id: String,
                 name: String,
-                avatar: String?) {
+                avatar: String?,
+                botId: String) {
         self.id = id
         self.name = name
         self.avatar = avatar
+        self.botId = botId
     }
 }
 
 extension Subscriber {
-    public convenience init(with user: CallbackUser) {
+    public convenience init(with user: CallbackUser, botId: String) {
         self.init()
+        self.botId = botId
         update(with: user)
     }
     
