@@ -29,6 +29,12 @@ public extension ViberBotCommonContainer {
             app.migrations.add(CreateSubscriber())
             app.migrations.add(CreateSavedCallbackEvent())
             app.migrations.add(CreateSavedStepbackEvent())
+            app.migrations.add(AddSubscribersBotInfoEvent())
+            app.migrations.add(AddSavedStepbackBotInfoEvent())
+            app.migrations.add(AddSavedCallbackBotInfoEvent())
+            app.migrations.add(FillSubscribersBotInfoDefailEvent(defaultBotName: config.botId))
+            app.migrations.add(FillSavedCallbackBotInfoEvent(defaultBotName: config.botId))
+            app.migrations.add(FillSavedStepbackBotInfoEvent(defaultBotName: config.botId))
         }
         try app.group(.constant(config.routePath)) { builder in
             try builder.register(collection: ViberBotController())

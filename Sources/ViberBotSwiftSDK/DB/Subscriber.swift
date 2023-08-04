@@ -63,9 +63,6 @@ public final class Subscriber: Model {
     @Field(key: "bot_id")
     public var botId: String?
 
-//    @OptionalField(key: "external_value")
-//    public var externalValue: Data?
-
     /// Creates a new, empty Subscriber.
     public init() { }
 
