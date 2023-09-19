@@ -98,8 +98,8 @@ public struct QuickReplier {
     }
     
     private func getFinalKeyboard(_ custom: UIGridViewBuilder?) -> UIGridViewBuilder? {
-        custom ?? step.getKeyboardFromBot(participant: participant,
-                                          preferredLanguage: preferredLanguage,
-                                          request: request)
+        custom ?? step.startingKeyboardFromBot(participant: participant,
+                                               env: .init(preferredLanguage: preferredLanguage,
+                                                          request: request))
     }
 }

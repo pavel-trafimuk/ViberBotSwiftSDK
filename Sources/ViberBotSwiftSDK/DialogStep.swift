@@ -2,22 +2,29 @@ import Foundation
 import Vapor
 import ViberSharedSwiftSDK
 
+public struct DialogEnvironment {
+    public init(preferredLanguage: String, request: Request) {
+        self.preferredLanguage = preferredLanguage
+        self.request = request
+    }
+    
+    public let preferredLanguage: String
+    public let request: Request
+}
+
 public protocol DialogStep: Identifiable {
     
-    /// to quickly generate buttons for menu
-    static func getKeyboardButtonRepresentation(preferredLanguage: String,
-                                                request: Request) -> UIGridButtonBuilder?
+    /// useful to unify representation of this step in other menus
+    static func asButtonInMenu(_ env: DialogEnvironment) -> UIGridButtonBuilder?
 
     /// random text will be sent to the participant when this step will be start,
     /// default value is nil
-    func getTextsFromBot(preferredLanguage: String,
-                         request: Request) -> [String]?
+    func startingTextsFromBot(_ env: DialogEnvironment) -> [String]?
     
     /// keyboard which will be send with text above
     /// default value is nil
-    func getKeyboardFromBot(participant: ViberSharedSwiftSDK.CallbackUser,
-                            preferredLanguage: String,
-                            request: Request) -> UIGridViewBuilder?
+    func startingKeyboardFromBot(participant: CallbackUser?,
+                                 env: DialogEnvironment) -> UIGridViewBuilder?
     
     /// any custom logic, which you want to execute, when participant starts this step
     func onStepWasStartedFromViberMessage(_ message: MessageCallbackModel,
@@ -68,8 +75,9 @@ public extension DialogStep {
     
     func quickReplyOnStepStart(participant: ViberSharedSwiftSDK.CallbackUser,
                                replier: QuickReplier) {
-        guard let texts = getTextsFromBot(preferredLanguage: replier.preferredLanguage,
-                                          request: replier.request) else {
+        let env = DialogEnvironment(preferredLanguage: replier.preferredLanguage,
+                                    request: replier.request)
+        guard let texts = startingTextsFromBot(env) else {
             return
         }
         Task {
@@ -81,9 +89,9 @@ public extension DialogStep {
                                   previousTrackingData: TrackingData?,
                                   request: Request) -> (any SendMessageRequestCommonValues)? {
         let preferredLanguage = previousTrackingData?.preferredLanguageCode ?? participant.language
-
-        guard var text = getTextsFromBot(preferredLanguage: preferredLanguage,
-                                         request: request)?.randomElement() else {
+        let env = DialogEnvironment(preferredLanguage: preferredLanguage,
+                                    request: request)
+        guard var text = startingTextsFromBot(env)?.randomElement() else {
             return nil
         }
         // TODO: make it everywhere (in sender?)
@@ -92,9 +100,8 @@ public extension DialogStep {
 
         let keyboard: UIGridView?
         do {
-            if let builder = getKeyboardFromBot(participant: participant,
-                                                preferredLanguage: preferredLanguage,
-                                                request: request) {
+            if let builder = startingKeyboardFromBot(participant: participant,
+                                                     env: env) {
                 keyboard = try builder.build()
             }
             else {

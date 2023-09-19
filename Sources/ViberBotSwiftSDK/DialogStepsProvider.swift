@@ -26,11 +26,10 @@ extension DialogStepsProvider {
         let allSteps = getAllAvailableSteps(request: request)
         let trackingData = model.message.trackingData
         let preferredLanguage = trackingData?.preferredLanguageCode ?? model.sender.language
-
+        let env = DialogEnvironment(preferredLanguage: preferredLanguage, request: request)
         // first let's try to find - maybe user selected any menu
         if let step = allSteps.selectedStep(byText: model.message.text,
-                                            preferredLanguage: preferredLanguage,
-                                            request: request) {
+                                            env: env) {
             request.logger.debug("Found that user strictly selected: \(step.id)")
             
             saveStepEvent(step: step.id,
@@ -98,8 +97,7 @@ extension DialogStepsProvider {
 
 extension Array where Element == any DialogStep {
     func selectedStep(byText text: String?,
-                      preferredLanguage: String,
-                      request: Request) -> Element? {
+                      env: DialogEnvironment) -> Element? {
         // check by id
         if let found = first(where: { $0.id == text }) {
             return found
@@ -108,8 +106,7 @@ extension Array where Element == any DialogStep {
         // also if step was with openUrl, it will send the url to the bot(
         if let found = first(where: { step in
             guard
-                let builder = type(of: step).getKeyboardButtonRepresentation(preferredLanguage: preferredLanguage,
-                                                                             request: request),
+                let builder = type(of: step).asButtonInMenu(env),
                 builder._actionType == .openUrl
             else {
                 return false
