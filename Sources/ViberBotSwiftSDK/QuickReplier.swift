@@ -12,7 +12,7 @@ public struct QuickReplier {
         self.step = step
         self.request = request
         self.previousTrackingData = previousTrackingData
-        sender = .init(request: request)
+        sender = Sender(request: request)
     }
 
     public let participant: CallbackUser
@@ -46,7 +46,7 @@ public struct QuickReplier {
                     keyboard: getFinalKeyboard(customKeyboard),
                     trackingData: getFinalTrackingData(customTrackingData),
                     isSilent: isSilent,
-                    to: participant.id)
+                    to: .init(participant.id))
     }
     
     public func send(text: String,
@@ -62,7 +62,7 @@ public struct QuickReplier {
                     keyboard: getFinalKeyboard(customKeyboard),
                     trackingData: getFinalTrackingData(customTrackingData),
                     isSilent: isSilent,
-                    to: participant.id)
+                    to: .init(participant.id))
     }
     
     public func send(image: String,
@@ -77,7 +77,7 @@ public struct QuickReplier {
                     keyboard: getFinalKeyboard(customKeyboard),
                     trackingData: getFinalTrackingData(customTrackingData),
                     isSilent: isSilent,
-                    to: participant.id)
+                    to: .init(participant.id))
     }
     
     public func send(rich: UIGridViewBuilder,
@@ -88,7 +88,7 @@ public struct QuickReplier {
                     keyboard: getFinalKeyboard(customKeyboard),
                     trackingData: getFinalTrackingData(customTrackingData),
                     isSilent: isSilent,
-                    to: participant.id)
+                    to: .init(participant.id))
     }
     
     private func getFinalTrackingData(_ custom: TrackingData?) -> TrackingData? {
