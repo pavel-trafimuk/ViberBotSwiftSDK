@@ -98,3 +98,16 @@ public struct GetAccountInfo: Codable {
         case members
     }
 }
+
+public extension GetAccountInfo {
+    func isAdmin(_ user: CallbackUser?) -> Bool {
+        guard let user else { return false }
+        return isAdmin(user.id)
+    }
+    
+    func isParticipant(_ user: CallbackUser?) -> Bool {
+        guard let user else { return false }
+        return isParticipant(user.id)
+    }
+
+}

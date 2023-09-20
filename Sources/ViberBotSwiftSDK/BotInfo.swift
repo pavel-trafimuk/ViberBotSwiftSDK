@@ -1,5 +1,6 @@
 import Foundation
 import Vapor
+import ViberSharedSwiftSDK
 
 public struct BotInfo {
     let app: Application
@@ -43,5 +44,15 @@ public struct BotInfo {
         logger.debug("GetActualInfo result: \(responseModel)")
         app.storage[BotInfoKey.self] = responseModel
         return responseModel
+    }
+    
+    public func isAdmin(_ user: CallbackUser?) -> Bool {
+        guard let cachedInfo, let user else { return false }
+        return cachedInfo.isAdmin(user.id)
+    }
+    
+    public func isParticipant(_ user: CallbackUser?) -> Bool {
+        guard let cachedInfo, let user else { return false }
+        return cachedInfo.isAdmin(user.id)
     }
 }
