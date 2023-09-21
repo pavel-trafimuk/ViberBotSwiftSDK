@@ -324,6 +324,41 @@ extension Sender {
         
         send(content: message, asBroadcast: receivers.shouldSendAsBroadcast)
     }
+    
+    public func send(sticker: String,
+                     keyboard: UIGridViewBuilder? = nil,
+                     trackingData: TrackingData?,
+                     isSilent: Bool = false,
+                     to receivers: ReceiversList) {
+        do {
+            let builtKeyboard = try keyboard?.build()
+            send(sticker: sticker,
+                 keyboard: builtKeyboard,
+                 rawTrackingData: try trackingData?.toJSON(),
+                 isSilent: isSilent,
+                 to: receivers)
+        }
+        catch {
+            logError(error)
+        }
+    }
+    
+    public func send(sticker: String,
+                     keyboard: UIGridView? = nil,
+                     rawTrackingData: String?,
+                     isSilent: Bool = false,
+                     to receivers: ReceiversList) {
+        let message = StickerMessageRequestModel(stickerId: sticker,
+                                                 keyboard: keyboard,
+                                                 receiver: receivers.singleReceiverValue,
+                                                 broadcastList: receivers.broadcastReceiversValue,
+                                                 sender: senderInfo,
+                                                 rawTrackingData: rawTrackingData,
+                                                 minApiVersion: minApiVersion,
+                                                 authToken: apiKey,
+                                                 isSilent: isSilent)
+        send(content: message, asBroadcast: receivers.shouldSendAsBroadcast)
+    }
 }
 
 extension Encodable {
