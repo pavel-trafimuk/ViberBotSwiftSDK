@@ -10,10 +10,10 @@ public struct PictureMessageRequestModel: Codable, SendMessageRequestCommonValue
     /// Example: http://www.example.com/path/image.jpeg.
     /// Animated GIFs can be sent as URL messages or file messages.
     /// Max image size: 1MB on iOS, 3MB on Android.
-    public let media: URL
+    public let media: String
     
     /// Recommended: 400x400. Max size: 100kb.
-    public let thumbnail: URL?
+    public let thumbnail: String?
 
     public let keyboard: UIGridView?
 
@@ -33,8 +33,8 @@ public struct PictureMessageRequestModel: Codable, SendMessageRequestCommonValue
     public let isSilent: Bool
 
     public init(text: String,
-                media: URL,
-                thumbnail: URL?,
+                media: String,
+                thumbnail: String?,
                 keyboard: UIGridView? = nil,
                 receiver: String?,
                 broadcastList: [String]? = nil,
@@ -57,8 +57,8 @@ public struct PictureMessageRequestModel: Codable, SendMessageRequestCommonValue
     }
     
     public init(text: String,
-                media: URL,
-                thumbnail: URL?,
+                media: String,
+                thumbnail: String?,
                 keyboard: UIGridView? = nil,
                 receiver: String?,
                 broadcastList: [String]? = nil,

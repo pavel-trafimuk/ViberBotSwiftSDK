@@ -242,17 +242,17 @@ extension Sender {
                      rawTrackingData: String?,
                      isSilent: Bool = false,
                      to receivers: ReceiversList) {
-        guard let url = URL(string: image) else { return }
-        let thumbnailUrl: URL?
-        if let thumbnail {
-            thumbnailUrl = URL(string: thumbnail)
-        }
-        else {
-            thumbnailUrl = nil
-        }
+//        guard let url = URL(string: image) else { return }
+//        let thumbnailUrl: URL?
+//        if let thumbnail {
+//            thumbnailUrl = URL(string: thumbnail)
+//        }
+//        else {
+//            thumbnailUrl = nil
+//        }
         let message = PictureMessageRequestModel(text: description,
-                                                 media: url,
-                                                 thumbnail: thumbnailUrl,
+                                                 media: image,
+                                                 thumbnail: thumbnail,
                                                  keyboard: keyboard,
                                                  receiver: receivers.singleReceiverValue,
                                                  broadcastList: receivers.broadcastReceiversValue,
