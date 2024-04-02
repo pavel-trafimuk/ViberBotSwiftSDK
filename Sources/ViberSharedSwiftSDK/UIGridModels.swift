@@ -173,6 +173,7 @@ extension UIGridView {
             case reply = "reply"
             case openUrl = "open-url"
             case sharePhone = "share-phone"
+            case location = "location-picker"
         }
         
         public let actionType: ActionType
