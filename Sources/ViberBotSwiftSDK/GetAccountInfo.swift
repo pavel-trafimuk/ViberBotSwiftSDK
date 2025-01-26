@@ -64,6 +64,7 @@ public struct GetAccountInfo: Codable {
         
         public enum Role: String, Codable {
             case admin
+            case member
             case participant
         }
         public let role: Role
@@ -78,7 +79,7 @@ public struct GetAccountInfo: Codable {
     }
 
     public func isParticipant(_ id: String) -> Bool {
-        members?.contains(where: { $0.id == id && $0.role == .participant }) ?? false
+        members?.contains(where: { $0.id == id && ($0.role == .member || $0.role == .participant) }) ?? false
     }
 
     public enum CodingKeys: String, CodingKey {
