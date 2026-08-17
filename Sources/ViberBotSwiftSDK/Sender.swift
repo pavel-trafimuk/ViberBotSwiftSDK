@@ -39,6 +39,22 @@ public struct ReceiversList: ExpressibleByArrayLiteral, ExpressibleByStringLiter
         }
         return list
     }
+
+    /// Viber `/broadcast_message` accepts at most 300 ids.
+    static let maxBroadcastRecipients = 300
+
+    var isEmpty: Bool { list.isEmpty }
+
+    func slicesForSend() -> [ReceiversList] {
+        guard !list.isEmpty else { return [] }
+        if list.count <= Self.maxBroadcastRecipients {
+            return [self]
+        }
+        return stride(from: 0, to: list.count, by: Self.maxBroadcastRecipients).map { start in
+            let end = min(start + Self.maxBroadcastRecipients, list.count)
+            return ReceiversList(list: Array(list[start..<end]))
+        }
+    }
 }
 
 /// Short life structure for sending msgs
@@ -180,16 +196,18 @@ extension Sender {
                      rawTrackingData: String?,
                      isSilent: Bool = false,
                      to receivers: ReceiversList) {
-        let message = TextMessageRequestModel(text: text,
-                                              keyboard: keyboard,
-                                              receiver: receivers.singleReceiverValue,
-                                              broadcastList: receivers.broadcastReceiversValue,
-                                              sender: senderInfo,
-                                              rawTrackingData: rawTrackingData,
-                                              minApiVersion: minApiVersion,
-                                              authToken: apiKey,
-                                              isSilent: isSilent)
-        send(content: message, asBroadcast: receivers.shouldSendAsBroadcast)
+        for slice in receivers.slicesForSend() {
+            let message = TextMessageRequestModel(text: text,
+                                                  keyboard: keyboard,
+                                                  receiver: slice.singleReceiverValue,
+                                                  broadcastList: slice.broadcastReceiversValue,
+                                                  sender: senderInfo,
+                                                  rawTrackingData: rawTrackingData,
+                                                  minApiVersion: minApiVersion,
+                                                  authToken: apiKey,
+                                                  isSilent: isSilent)
+            send(content: message, asBroadcast: slice.shouldSendAsBroadcast)
+        }
     }
     
     public func send(image: String,
@@ -250,18 +268,20 @@ extension Sender {
         else {
             thumbnailUrl = nil
         }
-        let message = PictureMessageRequestModel(text: description,
-                                                 media: url,
-                                                 thumbnail: thumbnailUrl,
-                                                 keyboard: keyboard,
-                                                 receiver: receivers.singleReceiverValue,
-                                                 broadcastList: receivers.broadcastReceiversValue,
-                                                 sender: senderInfo,
-                                                 rawTrackingData: rawTrackingData,
-                                                 minApiVersion: minApiVersion,
-                                                 authToken: apiKey,
-                                                 isSilent: isSilent)
-        send(content: message, asBroadcast: receivers.shouldSendAsBroadcast)
+        for slice in receivers.slicesForSend() {
+            let message = PictureMessageRequestModel(text: description,
+                                                     media: url,
+                                                     thumbnail: thumbnailUrl,
+                                                     keyboard: keyboard,
+                                                     receiver: slice.singleReceiverValue,
+                                                     broadcastList: slice.broadcastReceiversValue,
+                                                     sender: senderInfo,
+                                                     rawTrackingData: rawTrackingData,
+                                                     minApiVersion: minApiVersion,
+                                                     authToken: apiKey,
+                                                     isSilent: isSilent)
+            send(content: message, asBroadcast: slice.shouldSendAsBroadcast)
+        }
     }
     
     public func send(url: URL,
@@ -269,17 +289,18 @@ extension Sender {
                      rawTrackingData: String?,
                      isSilent: Bool = false,
                      to receivers: ReceiversList) {
-        let message = UrlMessageRequestModel(media: url,
-                                             keyboard: keyboard,
-                                             receiver: receivers.singleReceiverValue,
-                                             broadcastList: receivers.broadcastReceiversValue,
-                                             sender: senderInfo,
-                                             rawTrackingData: rawTrackingData,
-                                             minApiVersion: minApiVersion,
-                                             authToken: apiKey,
-                                             isSilent: isSilent)
-        
-        send(content: message, asBroadcast: receivers.shouldSendAsBroadcast)
+        for slice in receivers.slicesForSend() {
+            let message = UrlMessageRequestModel(media: url,
+                                                 keyboard: keyboard,
+                                                 receiver: slice.singleReceiverValue,
+                                                 broadcastList: slice.broadcastReceiversValue,
+                                                 sender: senderInfo,
+                                                 rawTrackingData: rawTrackingData,
+                                                 minApiVersion: minApiVersion,
+                                                 authToken: apiKey,
+                                                 isSilent: isSilent)
+            send(content: message, asBroadcast: slice.shouldSendAsBroadcast)
+        }
     }
     
     public func send(rich: UIGridViewBuilder,
@@ -290,17 +311,18 @@ extension Sender {
         do {
             let builtKeyboard = try keyboard?.build()
             let builtRich = try rich.build()
-            let message = RichMessageRequestModel(richMedia: builtRich,
-                                                  keyboard: builtKeyboard,
-                                                  receiver: receivers.singleReceiverValue,
-                                                  broadcastList: receivers.broadcastReceiversValue,
-                                                  sender: senderInfo,
-                                                  trackingData: trackingData,
-                                                  minApiVersion: minApiVersion,
-                                                  authToken: apiKey,
-                                                  isSilent: isSilent)
-            
-            send(content: message, asBroadcast: receivers.shouldSendAsBroadcast)
+            for slice in receivers.slicesForSend() {
+                let message = RichMessageRequestModel(richMedia: builtRich,
+                                                      keyboard: builtKeyboard,
+                                                      receiver: slice.singleReceiverValue,
+                                                      broadcastList: slice.broadcastReceiversValue,
+                                                      sender: senderInfo,
+                                                      trackingData: trackingData,
+                                                      minApiVersion: minApiVersion,
+                                                      authToken: apiKey,
+                                                      isSilent: isSilent)
+                send(content: message, asBroadcast: slice.shouldSendAsBroadcast)
+            }
         }
         catch {
             logError(error)
@@ -312,17 +334,18 @@ extension Sender {
                      rawTrackingData: String?,
                      isSilent: Bool = false,
                      to receivers: ReceiversList) {
-        let message = RichMessageRequestModel(richMedia: rich,
-                                              keyboard: keyboard,
-                                              receiver: receivers.singleReceiverValue,
-                                              broadcastList: receivers.broadcastReceiversValue,
-                                              sender: senderInfo,
-                                              rawTrackingData: rawTrackingData,
-                                              minApiVersion: minApiVersion,
-                                              authToken: apiKey,
-                                              isSilent: isSilent)
-        
-        send(content: message, asBroadcast: receivers.shouldSendAsBroadcast)
+        for slice in receivers.slicesForSend() {
+            let message = RichMessageRequestModel(richMedia: rich,
+                                                  keyboard: keyboard,
+                                                  receiver: slice.singleReceiverValue,
+                                                  broadcastList: slice.broadcastReceiversValue,
+                                                  sender: senderInfo,
+                                                  rawTrackingData: rawTrackingData,
+                                                  minApiVersion: minApiVersion,
+                                                  authToken: apiKey,
+                                                  isSilent: isSilent)
+            send(content: message, asBroadcast: slice.shouldSendAsBroadcast)
+        }
     }
     
     public func send(sticker: String,
@@ -348,16 +371,18 @@ extension Sender {
                      rawTrackingData: String?,
                      isSilent: Bool = false,
                      to receivers: ReceiversList) {
-        let message = StickerMessageRequestModel(stickerId: sticker,
-                                                 keyboard: keyboard,
-                                                 receiver: receivers.singleReceiverValue,
-                                                 broadcastList: receivers.broadcastReceiversValue,
-                                                 sender: senderInfo,
-                                                 rawTrackingData: rawTrackingData,
-                                                 minApiVersion: minApiVersion,
-                                                 authToken: apiKey,
-                                                 isSilent: isSilent)
-        send(content: message, asBroadcast: receivers.shouldSendAsBroadcast)
+        for slice in receivers.slicesForSend() {
+            let message = StickerMessageRequestModel(stickerId: sticker,
+                                                     keyboard: keyboard,
+                                                     receiver: slice.singleReceiverValue,
+                                                     broadcastList: slice.broadcastReceiversValue,
+                                                     sender: senderInfo,
+                                                     rawTrackingData: rawTrackingData,
+                                                     minApiVersion: minApiVersion,
+                                                     authToken: apiKey,
+                                                     isSilent: isSilent)
+            send(content: message, asBroadcast: slice.shouldSendAsBroadcast)
+        }
     }
 }
 

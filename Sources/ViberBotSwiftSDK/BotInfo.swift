@@ -53,6 +53,6 @@ public struct BotInfo {
     
     public func isParticipant(_ user: CallbackUser?) -> Bool {
         guard let cachedInfo, let user else { return false }
-        return cachedInfo.isAdmin(user.id)
+        return cachedInfo.isParticipant(user.id)
     }
 }
