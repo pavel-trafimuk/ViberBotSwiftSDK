@@ -62,7 +62,10 @@ public struct GetAccountInfo: Codable {
         public let name: String?
         public let avatar: String?
         
+        /// Production `get_account_info` roles: `superadmin` (owner) and `admin`.
+        /// `member` / `participant` are legacy public-chat values.
         public enum Role: String, Codable {
+            case superadmin
             case admin
             case member
             case participant
@@ -74,12 +77,14 @@ public struct GetAccountInfo: Codable {
     /// Deprecated
     public let members: [Member]?
     
+    /// Account superadmin (`role: superadmin`).
     public func isAdmin(_ id: String) -> Bool {
-        members?.contains(where: { $0.id == id && $0.role == .admin }) ?? false
+        members?.contains(where: { $0.id == id && $0.role == .superadmin }) ?? false
     }
 
+    /// Account admin (`role: admin`), not a public-chat participant.
     public func isParticipant(_ id: String) -> Bool {
-        members?.contains(where: { $0.id == id && ($0.role == .member || $0.role == .participant) }) ?? false
+        members?.contains(where: { $0.id == id && $0.role == .admin }) ?? false
     }
 
     public enum CodingKeys: String, CodingKey {
