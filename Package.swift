@@ -20,7 +20,8 @@ let package = Package(
         // Dependencies declare other packages that this package depends on.
         // .package(url: /* package url */, from: "1.0.0"),
         .package(url: "https://github.com/vapor/vapor.git", from: "4.117.0"),
-        .package(url: "https://github.com/vapor/fluent.git", from: "4.13.0"),
+        // 4.13+ needs Swift 6 tools; kate-bot Fly image is still Swift 5.9.
+        .package(url: "https://github.com/vapor/fluent.git", from: "4.12.0"),
     ],
     targets: [
         // Targets are the basic building blocks of a package. A target can define a module or a test suite.
