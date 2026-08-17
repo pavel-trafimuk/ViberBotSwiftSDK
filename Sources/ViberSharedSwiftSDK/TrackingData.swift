@@ -26,7 +26,7 @@ public struct TrackingData: Codable, Content {
     /// also automatically cleaned when trackingData reached the limit
     /// for sensitive information - use storage
     public struct HistoryItem: Codable, Content, Equatable {
-        public enum Role {
+        public enum Role: Sendable {
             static let botPrefix = "⇲"
             case bot
             case participant

@@ -7,7 +7,7 @@
 
 import Foundation
 
-public enum CallbackEventType: String, Codable {
+public enum CallbackEventType: String, Codable, Sendable {
     case delivered
     case seen
     case failed

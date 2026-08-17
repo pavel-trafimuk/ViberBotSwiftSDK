@@ -7,7 +7,7 @@
 
 import Foundation
 
-public enum MessageType: String, Codable {
+public enum MessageType: String, Codable, Sendable {
     case text
     case picture
     case video

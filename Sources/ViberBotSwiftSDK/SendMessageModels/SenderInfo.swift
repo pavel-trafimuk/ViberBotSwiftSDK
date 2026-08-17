@@ -1,6 +1,6 @@
 import Foundation
 
-public struct SenderInfo: Codable {
+public struct SenderInfo: Codable, Sendable {
     public let name: String
     public let avatar: URL?
     

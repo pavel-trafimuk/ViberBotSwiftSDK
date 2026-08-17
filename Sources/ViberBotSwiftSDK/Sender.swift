@@ -34,7 +34,7 @@ public struct ReceiversList: ExpressibleByArrayLiteral, ExpressibleByStringLiter
     }
     
     var broadcastReceiversValue: [String]? {
-        guard !shouldSendAsBroadcast else {
+        guard shouldSendAsBroadcast else {
             return nil
         }
         return list

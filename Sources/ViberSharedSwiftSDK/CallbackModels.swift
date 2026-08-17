@@ -67,7 +67,7 @@ public enum CallbackEvent: Decodable {
     }
 }
 
-public struct SetWebhookCallbackModel: Codable {
+public struct SetWebhookCallbackModel: Codable, Sendable {
     public let timestamp: Int // TODO: convert epoch time to date
     public let messageToken: Int64
     
@@ -77,7 +77,7 @@ public struct SetWebhookCallbackModel: Codable {
     }
 }
 
-public struct SubscribedCallbackModel: Codable {
+public struct SubscribedCallbackModel: Codable, Sendable {
     public let timestamp: Int // TODO: convert epoch time to date
     public let messageToken: Int64
 
@@ -91,7 +91,7 @@ public struct SubscribedCallbackModel: Codable {
 }
 
 
-public struct UnSubscribedCallbackModel: Codable {
+public struct UnSubscribedCallbackModel: Codable, Sendable {
     public let timestamp: Int // TODO: convert epoch time to date
     public let messageToken: Int64
     public let userId: String
@@ -103,11 +103,11 @@ public struct UnSubscribedCallbackModel: Codable {
     }
 }
 
-public struct ConversationStartedCallbackModel: Codable {
+public struct ConversationStartedCallbackModel: Codable, Sendable {
     public let timestamp: Int // TODO: convert epoch time to date
     public let messageToken: Int64
 
-    public enum StartedType: String, Codable {
+    public enum StartedType: String, Codable, Sendable {
         case open
     }
     public let type: StartedType
@@ -127,7 +127,7 @@ public struct ConversationStartedCallbackModel: Codable {
     }
 }
 
-public struct DeliveredCallbackModel: Codable {
+public struct DeliveredCallbackModel: Codable, Sendable {
     public let timestamp: Int // TODO: convert epoch time to date
     public let messageToken: Int64
     public let userId: String
@@ -140,7 +140,7 @@ public struct DeliveredCallbackModel: Codable {
 }
 
 
-public struct SeenCallbackModel: Codable {
+public struct SeenCallbackModel: Codable, Sendable {
     public let timestamp: Int // TODO: convert epoch time to date
     public let messageToken: Int64
     public let userId: String
@@ -152,7 +152,7 @@ public struct SeenCallbackModel: Codable {
     }
 }
 
-public struct FailedCallbackModel: Codable {
+public struct FailedCallbackModel: Codable, Sendable {
     public let timestamp: Int // TODO: convert epoch time to date
     public let messageToken: Int64
     public let userId: String
@@ -167,12 +167,12 @@ public struct FailedCallbackModel: Codable {
 }
 
 // TODO: returns specific models for message kinds?
-public struct MessageCallbackModel: Codable {
+public struct MessageCallbackModel: Codable, Sendable {
     public let timestamp: Int // TODO: convert epoch time to date
     public let messageToken: Int64
     public let sender: CallbackUser
 
-    public struct Message: Codable {
+    public struct Message: Codable, Sendable {
         public let type: MessageType
         public let text: String?
         
@@ -225,13 +225,13 @@ public struct MessageCallbackModel: Codable {
     }
 }
 
-public struct ClientStatusCallbackModel: Codable {
+public struct ClientStatusCallbackModel: Codable, Sendable {
     public let timestamp: Int // TODO: convert epoch time to date
     public let messageToken: Int64
     public let user: CallbackUser
     public let status: Status
     
-    public struct Status: Codable {
+    public struct Status: Codable, Sendable {
         public let type: String
         public let code: Int
         public let supportedPSPs: [String]
@@ -253,7 +253,7 @@ public struct ClientStatusCallbackModel: Codable {
     }
 }
 
-public struct CallbackUser: Codable {
+public struct CallbackUser: Codable, Sendable {
     public let id: String
     public let name: String?
     public let avatar: String?

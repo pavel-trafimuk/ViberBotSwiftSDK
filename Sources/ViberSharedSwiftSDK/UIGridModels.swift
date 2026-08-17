@@ -12,9 +12,9 @@ public enum UIGridError: Error {
     case emptyButtons
 }
 
-public struct UIGridView: Codable {
+public struct UIGridView: Codable, Sendable {
     
-    public enum GridType: String, Codable {
+    public enum GridType: String, Codable, Sendable {
         case richMedia = "rich_media"
         case keyboard
     }
@@ -42,7 +42,7 @@ public struct UIGridView: Codable {
     public let buttonsGroupRows: Int?
     
     
-    public enum InputFieldState: String, Codable {
+    public enum InputFieldState: String, Codable, Sendable {
         case regular
         case minimized
         case hidden
@@ -125,7 +125,7 @@ public struct UIGridView: Codable {
 }
 
 extension UIGridView {
-    public struct Button: Codable {
+    public struct Button: Codable, Sendable {
         
         public let columns: Int
         
@@ -138,7 +138,7 @@ extension UIGridView {
 
         public let isSilent: Bool?
         
-        public enum BackgroundMediaType: String, Codable {
+        public enum BackgroundMediaType: String, Codable, Sendable {
             /// JPEG and PNG files are supported. Max size: 500 kb
             case picture
             
@@ -150,7 +150,7 @@ extension UIGridView {
         /// URL for background media content (picture or gif). Will be placed with aspect to fill logic
         public let backgroundMedia: URL?
         
-        public enum MediaScaleType: String, Codable {
+        public enum MediaScaleType: String, Codable, Sendable {
             /// contents scaled to fill with fixed aspect. some portion of content may be clipped
             case crop
             /// contents scaled to fill without saving fixed aspect
@@ -168,7 +168,7 @@ extension UIGridView {
         /// See reply logic for more details.
         /// Note: location-picker and share-phone are not supported on desktop,
         /// and require adding any text in the ActionBody parameter.
-        public enum ActionType: String, Codable {
+        public enum ActionType: String, Codable, Sendable {
             case none
             case reply = "reply"
             case openUrl = "open-url"
@@ -189,7 +189,7 @@ extension UIGridView {
         
         public let text: String?
         
-        public enum TextSize: String, Codable {
+        public enum TextSize: String, Codable, Sendable {
             case small
             case regular
             case large
@@ -199,14 +199,14 @@ extension UIGridView {
         public let textVAlign: String? // middle
         public let textHAlign: String? // center
         
-        public enum OpenUrlType: String, Codable {
+        public enum OpenUrlType: String, Codable, Sendable {
             case `internal`
             case external
         }
         
         public let openUrlType: OpenUrlType?
         
-        public enum OpenUrlMediaType: String, Codable {
+        public enum OpenUrlMediaType: String, Codable, Sendable {
             case notMedia = "not-media"
             case video
             case gif
@@ -224,7 +224,7 @@ extension UIGridView {
 //        }
 //        public let internalBrowser: InternalBrowser?
         
-        public struct Frame: Codable {
+        public struct Frame: Codable, Sendable {
             public init(borderWidth: Int? = nil,
                         borderColor: String? = nil,
                         cornerRadius: Int? = nil) {
